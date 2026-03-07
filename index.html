@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VELOX — Cinema & Downloads</title>
+<title>VELOX Cinema — Watch Movies & Series Online | Nigeria</title>
+<meta name="description" content="Discover movies and series on VELOX Cinema. Find where to watch on Netflix, Showmax, Amazon Prime. Hollywood, Nollywood, K-Drama, C-Drama — all in one place.">
+<meta name="keywords" content="movies Nigeria, watch movies online Nigeria, Nollywood, Netflix Nigeria, Showmax Nigeria, K-Drama, series, VELOX cinema">
+<meta property="og:title" content="VELOX Cinema — Movies & Series">
+<meta property="og:description" content="Find where to watch any movie or series legally. Free streaming, trailers, ratings and more.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Barlow:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -737,6 +742,14 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   <span id="toastTxt"></span>
 </div>
 
+<!-- ── PAGES MODAL (About / Privacy / Contact) ── -->
+<div id="pageModal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);overflow-y:auto;padding:60px 20px 40px">
+  <div style="max-width:720px;margin:0 auto;background:var(--bg3);border:1px solid var(--bdr);border-radius:16px;padding:40px;position:relative">
+    <button onclick="closePage()" style="position:absolute;top:16px;right:16px;background:var(--bg4);border:1px solid var(--bdr);color:var(--ink2);padding:8px 14px;border-radius:6px;font-size:.8rem;cursor:pointer">✕ Close</button>
+    <div id="pageContent"></div>
+  </div>
+</div>
+
 <footer>
   <div class="foot-inner">
     <div class="foot-top">
@@ -744,7 +757,8 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         <div class="logo" style="font-size:1.5rem" onclick="goHome()">
           <span class="logo-v">V</span><span class="logo-el">EL</span><span class="logo-ox">OX</span>
         </div>
-        <p>Your definitive cinema portal — Hollywood, Nollywood, K-Drama, C-Drama. Watch trailers, track episodes and download everything.</p>
+        <p>Your definitive cinema portal — Hollywood, Nollywood, K-Drama, C-Drama. Discover where to watch legally, stream free, track episodes and explore trailers.</p>
+        <p style="font-size:.68rem;color:var(--ink3);margin-top:8px">Movie data provided by <a href="https://www.themoviedb.org" target="_blank" style="color:var(--burg)">TMDB</a>. Streaming data by JustWatch.</p>
       </div>
       <div class="foot-col">
         <h4>Browse</h4>
@@ -758,30 +772,33 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         </ul>
       </div>
       <div class="foot-col">
-        <h4>Moods</h4>
+        <h4>Discover</h4>
         <ul>
-          <li><a onclick="applyMood('action')">Action-Packed</a></li>
-          <li><a onclick="applyMood('romance')">Romantic</a></li>
-          <li><a onclick="applyMood('scary')">Horror</a></li>
-          <li><a onclick="applyMood('mindbend')">Mind-Bending</a></li>
+          <li><a onclick="applyMood('action')">⚡ Action</a></li>
+          <li><a onclick="applyMood('romance')">💕 Romance</a></li>
+          <li><a onclick="applyMood('scary')">😱 Horror</a></li>
+          <li><a onclick="applyMood('mindbend')">🌀 Mind-Bending</a></li>
+          <li><a onclick="applyMood('comedy')">😂 Comedy</a></li>
         </ul>
       </div>
       <div class="foot-col">
-        <h4>Download Sites</h4>
+        <h4>VELOX</h4>
         <ul>
-          <li><a href="https://t.me/VELOXDOWNLOADS" target="_blank" rel="noopener">VELOX Telegram</a></li>
-          <li><a href="https://yts.mx" target="_blank" rel="noopener">YTS</a></li>
-          
-          
-          <li><a href="https://www.tvseries.in" target="_blank" rel="noopener">TVSeries.in</a></li>
+          <li><a href="https://t.me/VELOXDOWNLOAD" target="_blank" rel="noopener">✈️ Telegram Channel</a></li>
+          <li><a onclick="showPage('about')" style="cursor:pointer">About VELOX</a></li>
+          <li><a onclick="showPage('privacy')" style="cursor:pointer">Privacy Policy</a></li>
+          <li><a onclick="showPage('contact')" style="cursor:pointer">Contact Us</a></li>
         </ul>
       </div>
     </div>
     <div class="foot-bot">
-      <span>© 2026 VELOX Cinema. Powered by TMDB. For entertainment purposes only.</span>
+      <span>© 2026 VELOX Cinema · Powered by TMDB · Not affiliated with any streaming service</span>
       <div class="foot-soc">
-        <a href="https://t.me/VELOXDOWNLOADS" target="_blank">
+        <a href="https://t.me/VELOXDOWNLOAD" target="_blank" title="Telegram">
           <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </a>
+        <a href="https://wa.me/?text=Check%20out%20VELOX%20Cinema%20-%20Best%20movie%20site%20in%20Nigeria!%20https%3A%2F%2Fcomforting-dieffenbachia-5d0b8f.netlify.app" target="_blank" title="Share on WhatsApp" style="color:#25D366">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </a>
       </div>
     </div>
@@ -1518,6 +1535,12 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
               Watch
             </button>
+            <a href="https://wa.me/?text=${encodeURIComponent('🎬 Check out '+title+' ('+year+') on VELOX Cinema!\nhttps://comforting-dieffenbachia-5d0b8f.netlify.app\n\nTrailers, ratings, where to watch — all in one place 🍿')}" target="_blank" rel="noopener noreferrer"
+               style="display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:6px;background:#25D366;color:#fff;font-size:.78rem;font-weight:800;text-decoration:none;transition:all .2s"
+               onmouseover="this.style.background='#1da851'" onmouseout="this.style.background='#25D366'">
+              <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Share
+            </a>
           </div>
         </div>
       </div>
@@ -1840,8 +1863,23 @@ function switchPTab(id, btn) {
 }
 
 /* ── COMMENTS ── */
-async function storageGet(key) { try { return await window.storage.get(key,true); } catch { return null; } }
-async function storageSet(key, val) { try { return await window.storage.set(key,val,true); } catch { return null; } }
+/* ── STORAGE: localStorage-based (works without any backend) ── */
+async function storageGet(key) {
+  try { return { value: localStorage.getItem(key) }; } catch { return null; }
+}
+async function storageSet(key, val) {
+  try { localStorage.setItem(key, val); return { value: val }; } catch { return null; }
+}
+
+/* ── TRACK MOVIE REQUESTS (for prioritizing Telegram uploads) ── */
+function updateDlBtn(tmdbId, title, isTv) {
+  try {
+    const requests = JSON.parse(localStorage.getItem('vx-requests') || '{}');
+    const key = String(tmdbId);
+    requests[key] = { title, isTv, count: (requests[key]?.count || 0) + 1, last: Date.now() };
+    localStorage.setItem('vx-requests', JSON.stringify(requests));
+  } catch(e) {}
+}
 
 function toggleSpoilerMode() {
   spoilerMode = !spoilerMode;
@@ -2029,6 +2067,63 @@ async function init() {
     loadTrending(),
     fetchSection('hollywood',1).then(items => renderGrid('g-hollywood', items)),
   ]);
+}
+
+/* ── STATIC PAGES (About / Privacy / Contact) ── */
+const PAGES = {
+  about: `
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:6px">About VELOX</h2>
+    <p style="color:var(--burg);font-size:.8rem;margin-bottom:24px">Your Cinema Portal</p>
+    <p style="line-height:1.8;margin-bottom:16px">VELOX is a free movie and series discovery platform built for Nigerian and African audiences. We help you find what to watch, where to watch it legally, and stay up to date with the latest releases from Hollywood, Nollywood, K-Drama, and C-Drama.</p>
+    <p style="line-height:1.8;margin-bottom:16px">Our platform uses data from <strong>The Movie Database (TMDB)</strong> and <strong>JustWatch</strong> to show you real-time streaming availability across Netflix, Amazon Prime, Showmax, Disney+ and more.</p>
+    <p style="line-height:1.8;margin-bottom:24px">VELOX does not host or distribute any movie files. We are a discovery and information service only.</p>
+    <div style="background:var(--bg4);border-radius:10px;padding:20px;border:1px solid var(--bdr)">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:12px">Join Our Community</div>
+      <a href="https://t.me/VELOXDOWNLOAD" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--burg);color:#fff;border-radius:8px;font-weight:700;font-size:.82rem;text-decoration:none">✈️ Join VELOX on Telegram</a>
+    </div>`,
+
+  privacy: `
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:6px">Privacy Policy</h2>
+    <p style="color:var(--ink3);font-size:.75rem;margin-bottom:24px">Last updated: March 2026</p>
+    <div style="line-height:1.9;font-size:.88rem">
+      <h3 style="margin-bottom:8px;margin-top:20px">1. Information We Collect</h3>
+      <p>VELOX stores your watchlist, viewing history, and episode progress locally on your device using browser localStorage. This data never leaves your device and is not sent to any server.</p>
+      <h3 style="margin-bottom:8px;margin-top:20px">2. Third-Party Services</h3>
+      <p>We use <strong>The Movie Database (TMDB)</strong> API to fetch movie data. TMDB's privacy policy applies to data fetched through their service. We also display streaming availability data from <strong>JustWatch</strong> via TMDB.</p>
+      <h3 style="margin-bottom:8px;margin-top:20px">3. Cookies & Advertising</h3>
+      <p>VELOX may display advertisements served by Google AdSense. Google may use cookies to show relevant ads based on your browsing. You can opt out at <a href="https://adssettings.google.com" target="_blank" style="color:var(--burg)">adssettings.google.com</a>.</p>
+      <h3 style="margin-bottom:8px;margin-top:20px">4. No Personal Data Collection</h3>
+      <p>VELOX does not collect your name, email address, or any personal information. Comments posted are stored anonymously.</p>
+      <h3 style="margin-bottom:8px;margin-top:20px">5. Contact</h3>
+      <p>For privacy concerns, contact us via our <a href="https://t.me/VELOXDOWNLOAD" target="_blank" style="color:var(--burg)">Telegram channel</a>.</p>
+    </div>`,
+
+  contact: `
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:6px">Contact Us</h2>
+    <p style="color:var(--ink3);font-size:.8rem;margin-bottom:24px">We'd love to hear from you</p>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <a href="https://t.me/VELOXDOWNLOAD" target="_blank" style="display:flex;align-items:center;gap:16px;padding:20px;background:var(--bg4);border:1px solid var(--bdr);border-radius:12px;text-decoration:none;color:var(--ink);transition:border-color .2s" onmouseover="this.style.borderColor='var(--burg)'" onmouseout="this.style.borderColor='var(--bdr)'">
+        <div style="width:44px;height:44px;background:var(--burg);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">✈️</div>
+        <div><div style="font-weight:700;margin-bottom:4px">Telegram</div><div style="font-size:.78rem;color:var(--ink3)">@VELOXDOWNLOAD — Fastest response, movie requests, updates</div></div>
+      </a>
+      <div style="padding:20px;background:var(--bg4);border:1px solid var(--bdr);border-radius:12px">
+        <div style="font-weight:700;margin-bottom:8px">📧 Request a Movie</div>
+        <p style="font-size:.82rem;color:var(--ink2);line-height:1.7">Visit our Telegram channel and send us the movie title. We'll prioritize adding it to VELOX based on demand.</p>
+      </div>
+    </div>`
+};
+
+function showPage(page) {
+  const modal = document.getElementById('pageModal');
+  const content = document.getElementById('pageContent');
+  content.innerHTML = PAGES[page] || '<p>Page not found</p>';
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closePage() {
+  document.getElementById('pageModal').style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 init();
