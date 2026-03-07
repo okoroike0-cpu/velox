@@ -1339,11 +1339,12 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
   dp.classList.add('open');
   document.body.style.overflow = 'hidden';
   const type = isTv ? 'tv' : 'movie';
-  const [d, vd, cd, sd] = await Promise.all([
+  const [d, vd, cd, sd, wp] = await Promise.all([
     api(`/${type}/${tmdbId}`),
     api(`/${type}/${tmdbId}/videos`),
     api(`/${type}/${tmdbId}/credits`),
     api(`/${type}/${tmdbId}/similar`),
+    api(`/${type}/${tmdbId}/watch/providers`),
   ]);
   const title    = d.title || d.name || 'Unknown';
   const year     = (d.release_date || d.first_air_date || '').slice(0,4);
@@ -1367,6 +1368,86 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
   const inWL       = isInWL(tmdbId);
   const veloxLinks = await getVeloxLinks(tmdbId, isTv);
   const hasVelox   = veloxLinks.length > 0;
+
+  /* ── WHERE TO WATCH (TMDB providers for Nigeria + Global) ── */
+  const providerLogos = {
+    'Netflix':       { color:'#E50914', icon:'https://image.tmdb.org/t/p/original/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg' },
+    'Amazon Prime Video': { color:'#00A8E0', icon:'https://image.tmdb.org/t/p/original/emthp39XA2YScoY2NXdzmuguiKw.jpg' },
+    'Showmax':       { color:'#FF0078', icon:'https://image.tmdb.org/t/p/original/7rwgEs15tFwyR9NPQ5vjikchRec.jpg' },
+    'Apple TV+':     { color:'#555', icon:'https://image.tmdb.org/t/p/original/peURlLlr8jggOwK53fJ5wdQl05y.jpg' },
+    'Disney+':       { color:'#113CCF', icon:'https://image.tmdb.org/t/p/original/7rwgEs15tFwyR9NPQ5vjikchRec.jpg' },
+    'YouTube':       { color:'#FF0000', icon:'' },
+    'Google Play Movies': { color:'#4285F4', icon:'' },
+  };
+
+  const ngProviders  = wp?.results?.NG;
+  const allProviders = wp?.results;
+  let streamProviders = [];
+
+  if (ngProviders) {
+    streamProviders = [
+      ...(ngProviders.flatrate||[]),
+      ...(ngProviders.rent||[]),
+      ...(ngProviders.buy||[]),
+    ];
+  } else if (allProviders) {
+    // fallback — use US providers if NG not available
+    const us = allProviders.US;
+    if (us) streamProviders = [...(us.flatrate||[]), ...(us.rent||[])].slice(0,4);
+  }
+
+  // deduplicate
+  const seen = new Set();
+  streamProviders = streamProviders.filter(p => {
+    if (seen.has(p.provider_id)) return false;
+    seen.add(p.provider_id); return true;
+  }).slice(0, 6);
+
+  const whereToWatchHTML = streamProviders.length > 0 ? `
+    <div style="margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <span style="font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3)">🌍 Where to Watch Legally</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        ${streamProviders.map(p => {
+          const logoUrl = p.logo_path ? `https://image.tmdb.org/t/p/original${p.logo_path}` : '';
+          const searchUrl = `https://www.google.com/search?q=watch+${encodeURIComponent(title)}+on+${encodeURIComponent(p.provider_name)}`;
+          return `<a href="${searchUrl}" target="_blank" rel="noopener noreferrer"
+            style="display:inline-flex;align-items:center;gap:9px;padding:10px 16px;border-radius:8px;background:var(--bg3);border:1px solid var(--bdr);color:var(--ink);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s"
+            onmouseover="this.style.borderColor='var(--burg)';this.style.background='var(--bg4)';this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.borderColor='var(--bdr)';this.style.background='var(--bg3)';this.style.transform=''">
+            ${logoUrl ? `<img src="${logoUrl}" style="width:24px;height:24px;border-radius:4px;object-fit:cover" alt="${p.provider_name}">` : '▶'}
+            ${p.provider_name}
+          </a>`;
+        }).join('')}
+      </div>
+      <p style="font-size:.6rem;color:var(--ink3);margin-top:8px">Source: JustWatch via TMDB · Availability may vary by region</p>
+    </div>` : `
+    <div style="margin-bottom:18px">
+      <div style="font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">🌍 Where to Watch Legally</div>
+      <div style="display:flex;flex-wrap:wrap;gap:9px">
+        <a href="https://www.netflix.com/search?q=${encodeURIComponent(title)}" target="_blank" rel="noopener noreferrer"
+           style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;background:var(--bg3);border:1px solid var(--bdr);color:var(--ink);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s"
+           onmouseover="this.style.borderColor='#E50914';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.transform=''">
+          🔴 Netflix
+        </a>
+        <a href="https://www.primevideo.com/search?phrase=${encodeURIComponent(title)}" target="_blank" rel="noopener noreferrer"
+           style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;background:var(--bg3);border:1px solid var(--bdr);color:var(--ink);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s"
+           onmouseover="this.style.borderColor='#00A8E0';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.transform=''">
+          🔵 Prime Video
+        </a>
+        <a href="https://www.showmax.com/eng/search?q=${encodeURIComponent(title)}" target="_blank" rel="noopener noreferrer"
+           style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;background:var(--bg3);border:1px solid var(--bdr);color:var(--ink);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s"
+           onmouseover="this.style.borderColor='#FF0078';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.transform=''">
+          🟣 Showmax
+        </a>
+        <a href="https://www.google.com/search?q=watch+${encodeURIComponent(title+' '+year)}+online+legally" target="_blank" rel="noopener noreferrer"
+           style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;background:var(--bg3);border:1px solid var(--bdr);color:var(--ink2);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s"
+           onmouseover="this.style.borderColor='var(--burg)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.transform=''">
+          🔍 Find More
+        </a>
+      </div>
+    </div>`;
 
   /* build download section HTML */
   const sitesHTML = dlLinks.sites.map(s => `
@@ -1440,6 +1521,8 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
 
   <div class="dl-sec" id="watchOnlineSection">
     <div class="dl-sec-title">▶ Watch Online</div>
+
+    ${whereToWatchHTML}
     <div style="background:var(--bg3);border:1px solid rgba(155,31,48,.2);border-radius:10px;padding:16px;margin-bottom:14px">
       <div style="position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;background:#000" id="watchOnlineBox">
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg4);cursor:pointer" onclick="loadWatchOnline('${streamUrl}')">
@@ -2070,5 +2153,4 @@ async function init() {
 init();
 </script>
 </body>
-
 </html>
