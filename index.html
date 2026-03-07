@@ -707,7 +707,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
           <div class="tg-icon">✈️</div>
           <h4>Join VELOX Telegram</h4>
           <p>Get instant alerts for new movies, series and episodes. First to know, first to download.</p>
-          <a class="tg-btn" href="https://t.me/OfficialTheNkiriChannel" target="_blank" rel="noopener">
+          <a class="tg-btn" href="https://t.me/VELOXDOWNLOADS" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             Join Channel
           </a>
@@ -769,10 +769,10 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
       <div class="foot-col">
         <h4>Download Sites</h4>
         <ul>
-          <li><a href="https://thenkiri.com" target="_blank" rel="noopener">TheNkiri</a></li>
+          <li><a href="https://t.me/VELOXDOWNLOADS" target="_blank" rel="noopener">VELOX Telegram</a></li>
           <li><a href="https://yts.mx" target="_blank" rel="noopener">YTS</a></li>
-          <li><a href="https://eztvx.to" target="_blank" rel="noopener">EZTV</a></li>
-          <li><a href="https://www.1337x.to" target="_blank" rel="noopener">1337x</a></li>
+          
+          
           <li><a href="https://www.tvseries.in" target="_blank" rel="noopener">TVSeries.in</a></li>
         </ul>
       </div>
@@ -780,7 +780,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
     <div class="foot-bot">
       <span>© 2026 VELOX Cinema. Powered by TMDB. For entertainment purposes only.</span>
       <div class="foot-soc">
-        <a href="https://t.me/OfficialTheNkiriChannel" target="_blank">
+        <a href="https://t.me/VELOXDOWNLOADS" target="_blank">
           <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </a>
       </div>
@@ -937,7 +937,7 @@ function cardHtml(item) {
         <button class="btn ov-view" onclick="openDetailGated(${item.id},${!!item.isTv});event.stopPropagation()">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>View
         </button>
-        <button class="btn ov-dl" onclick="openDetailGated(${item.id},${!!item.isTv});event.stopPropagation()">⬇ Download</button>
+        <button class="btn ov-watch" onclick="openDetailGated(${item.id},${!!item.isTv});event.stopPropagation()">▶ Watch</button>
       </div>
     </div>
     <div class="card-info">
@@ -1280,45 +1280,7 @@ document.addEventListener('click', e => {
 });
 
 /* ── DOWNLOAD LINKS ── */
-function buildDlLinks(title, year, isTv, tmdbId) {
-  const q      = encodeURIComponent(title);
-  const qy     = encodeURIComponent(`${title} ${year}`);
-  const eztv   = `https://eztvx.to/search/${q}`;
-  const x1337  = `https://www.1337x.to/search/${qy}/1/`;
-  const nk     = `https://thenkiri.com/?s=${q}`;
-  const nna    = `https://netnaija.com/?s=${q}`;
-  const fz     = `https://www.fzmovies.net/search-${title.replace(/ /g,'+')}`;
-  const o2tv   = `https://o2tvseries.com/?s=${q}`;
-  const tvserie= `https://www.tvseries.in/search?q=${q}`;
-  const yts    = `https://yts.mx/movies/${title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${year}`;
-  const ytsSearch = `https://yts.mx/browse-movies/${encodeURIComponent(title)}/all/all/0/latest/0/all`;
-  const google = `https://www.google.com/search?q=${q}+${year}+download+1080p+mp4`;
-  const tg     = `https://t.me/OfficialTheNkiriChannel`;
-  if (isTv) {
-    return { sites: [
-      { n:'TheNkiri',    icon:'🎬', url: nk,        primary: true },
-      { n:'EZTV',        icon:'⬇',  url: eztv },
-      { n:'1337x',       icon:'⬇',  url: x1337 },
-      { n:'O2TVSeries',  icon:'📺', url: o2tv },
-      { n:'TVSeries.in', icon:'📺', url: tvserie },
-      { n:'NetNaija',    icon:'🇳🇬', url: nna },
-      { n:'Telegram',    icon:'✈️', url: tg },
-      { n:'Google',      icon:'🔍', url: google },
-    ]};
-  } else {
-    return { sites: [
-      { n:'TheNkiri', icon:'🎬', url: nk,       primary: true },
-      { n:'YTS',      icon:'🎥', url: ytsSearch, primary: true },
-      { n:'FzMovies', icon:'⬇',  url: fz },
-      { n:'1337x',    icon:'⬇',  url: x1337 },
-      { n:'NetNaija', icon:'🇳🇬', url: nna },
-      { n:'Telegram', icon:'✈️', url: tg },
-      { n:'Google',   icon:'🔍', url: google },
-    ], yts, ytsSearch };
-  }
-}
-
-/* ── AVAILABILITY: always open full detail, show both download + watch online ── */
+/* ── AVAILABILITY: always open full detail ── */
 async function openDetailGated(tmdbId, isTv=false, autoTrailer=false) {
   const dp = document.getElementById('detPg');
   document.getElementById('detContent').innerHTML = `
@@ -1364,10 +1326,7 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
   const item  = { id:tmdbId, title, isTv, year, img: d.poster_path?IMG+d.poster_path:null, grade, backdrop };
   curDetailItem = { ...item, img: poster };
   addToHistory(item);
-  const dlLinks    = buildDlLinks(title, year, isTv, tmdbId);
   const inWL       = isInWL(tmdbId);
-  const veloxLinks = await getVeloxLinks(tmdbId, isTv);
-  const hasVelox   = veloxLinks.length > 0;
 
   /* ── WHERE TO WATCH (TMDB providers for Nigeria + Global) ── */
   const providerLogos = {
@@ -1449,104 +1408,38 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
       </div>
     </div>`;
 
-  /* build download section HTML */
-  const sitesHTML = dlLinks.sites.map(s => `
-    <a href="${s.url}" target="_blank" rel="noopener noreferrer"
-       style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:6px;border:1px solid ${s.primary?'rgba(155,31,48,.35)':'var(--bdr)'};background:${s.primary?'var(--burg4)':'var(--bg3)'};color:${s.primary?'var(--burg)':'var(--ink2)'};font-size:.74rem;font-weight:700;text-decoration:none;transition:all .2s;white-space:nowrap"
-       onmouseover="this.style.borderColor='var(--burg)';this.style.color='var(--ink)';this.style.background='var(--bg4)'"
-       onmouseout="this.style.borderColor='${s.primary?'rgba(155,31,48,.35)':'var(--bdr)'}';this.style.color='${s.primary?'var(--burg)':'var(--ink2)'}';this.style.background='${s.primary?'var(--burg4)':'var(--bg3)'}'">
-      ${s.icon||'⬇'} ${s.n}
-    </a>`).join('');
-
-  /* VELOX Direct download cards */
-  const veloxCardsHTML = hasVelox ? `
-    <div style="margin-bottom:18px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <div style="background:var(--burg);color:#fff;font-size:.58rem;font-weight:900;letter-spacing:2px;padding:3px 9px;border-radius:4px">VELOX</div>
-        <span style="font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green)">Direct Download — In Our Library ✓</span>
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:9px">
-        ${veloxLinks.map((lnk,i) => `
-          <a href="${lnk.download_url}" target="_blank" rel="noopener noreferrer"
-             style="display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:8px;background:var(--burg);border:2px solid var(--burg);color:#fff;text-decoration:none;font-size:.82rem;font-weight:800;transition:all .2s;box-shadow:0 4px 18px rgba(155,31,48,.35)"
-             onmouseover="this.style.background='var(--burg2)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(155,31,48,.5)'"
-             onmouseout="this.style.background='var(--burg)';this.style.transform='';this.style.boxShadow='0 4px 18px rgba(155,31,48,.35)'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:15px;height:15px;flex-shrink:0"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            ⬇ Download${lnk.quality?' · '+lnk.quality:''}${veloxLinks.length>1?' #'+(i+1):''}
-          </a>
-          ${lnk.subtitle_url ? `
-          <a href="${lnk.subtitle_url}" target="_blank" rel="noopener noreferrer"
-             style="display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:8px;background:var(--bg3);border:2px solid rgba(155,31,48,.4);color:var(--burg);text-decoration:none;font-size:.82rem;font-weight:800;transition:all .2s"
-             onmouseover="this.style.background='var(--burg4)';this.style.borderColor='var(--burg)';this.style.transform='translateY(-2px)'"
-             onmouseout="this.style.background='var(--bg3)';this.style.borderColor='rgba(155,31,48,.4)';this.style.transform=''">
-            📝 Subtitle
-          </a>` : ''}
-        `).join('')}
-      </div>
-      ${veloxLinks[0]?.notes ? `<p style="font-size:.62rem;color:var(--ink3);margin-top:8px">📝 ${veloxLinks[0].notes}</p>` : ''}
-    </div>` : '';
-
   const tg = TG_CHANNEL;
   const streamUrl = isTv
     ? `https://vidsrc.me/embed/tv?tmdb=${tmdbId}&season=1&episode=1`
     : `https://vidsrc.me/embed/movie?tmdb=${tmdbId}`;
 
   const dlHTML = `
-  <div class="dl-sec" id="detDl">
-    <div class="dl-sec-title">⬇ Download ${isTv ? 'Series' : 'Movie'}</div>
-
-    ${veloxCardsHTML}
-
-    ${!isTv ? `
-    <div style="margin-bottom:14px">
-      <div style="margin-bottom:6px;font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3)">Other Direct Download</div>
-      <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:10px">
-        <a href="https://dl.vidsrc.vip/movie/${tmdbId}" target="_blank" rel="noopener noreferrer"
-           style="display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:8px;background:var(--bg3);border:1.5px solid var(--bdr);color:var(--ink2);text-decoration:none;font-size:.8rem;font-weight:800;transition:all .2s"
-           onmouseover="this.style.borderColor='var(--burg)';this.style.color='var(--ink)';this.style.transform='translateY(-2px)'"
-           onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--ink2)';this.style.transform=''">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          ⬇ VidSrc Download
-        </a>
-      </div>
-      <p style="font-size:.62rem;color:var(--ink3);line-height:1.6">
-        💡 If any link doesn't work, try another source below or watch online.
-      </p>
-    </div>` : ''}
-
-    <div style="margin-bottom:6px;font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3)">More Sources</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">${sitesHTML}</div>
-    ${isTv ? `<p style="font-size:.66rem;color:var(--ink3);margin-top:4px;line-height:1.6">💡 Use the episode buttons below to download specific episodes directly.</p>` : ''}
-  </div>
-
   <div class="dl-sec" id="watchOnlineSection">
     <div class="dl-sec-title">▶ Watch Online</div>
 
     ${whereToWatchHTML}
+
     <div style="background:var(--bg3);border:1px solid rgba(155,31,48,.2);border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="margin-bottom:8px;font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3)">Free Stream</div>
       <div style="position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;background:#000" id="watchOnlineBox">
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg4);cursor:pointer" onclick="loadWatchOnline('${streamUrl}')">
           <div style="width:68px;height:68px;border-radius:50%;background:var(--burg);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(155,31,48,.5);transition:transform .2s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">
             <svg viewBox="0 0 24 24" fill="white" style="width:22px;height:22px;margin-left:4px"><path d="M5 3l14 9-14 9V3z"/></svg>
           </div>
           <div style="text-align:center">
-            <div style="font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:4px">Click to Stream</div>
-            <div style="font-size:.66rem;color:var(--ink3)">Free · No signup · Powered by VidSrc</div>
+            <div style="font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:4px">Click to Stream Free</div>
+            <div style="font-size:.66rem;color:var(--ink3)">No signup required · Powered by VidSrc</div>
           </div>
         </div>
       </div>
-      ${isTv ? `<p style="font-size:.62rem;color:var(--ink3);margin-top:10px;line-height:1.6">📺 Loads from S1E1. Click any episode's <strong>▶ Watch</strong> button below to jump to that episode.</p>` : ''}
+      ${isTv ? `<p style="font-size:.62rem;color:var(--ink3);margin-top:10px;line-height:1.6">📺 Loads S1E1 by default. Use episode buttons below to jump to any episode.</p>` : ''}
     </div>
+
     <div style="display:flex;flex-wrap:wrap;gap:8px">
       <a href="${tg}" target="_blank" rel="noopener noreferrer"
          style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:6px;border:1px solid rgba(155,31,48,.35);background:var(--burg4);color:var(--burg);font-size:.74rem;font-weight:700;text-decoration:none;transition:all .2s"
          onmouseover="this.style.background='var(--bg4)'" onmouseout="this.style.background='var(--burg4)'">
-        ✈️ Request on Telegram
-      </a>
-      <a href="https://www.google.com/search?q=${encodeURIComponent(title+' '+year+' download mp4')}" target="_blank" rel="noopener noreferrer"
-         style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg3);color:var(--ink2);font-size:.74rem;font-weight:700;text-decoration:none;transition:all .2s"
-         onmouseover="this.style.borderColor='var(--burg)'" onmouseout="this.style.borderColor='var(--bdr)'">
-        🔍 Search Download
+        ✈️ Join VELOX Telegram
       </a>
     </div>
   </div>`;
@@ -1562,10 +1455,10 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
       return `<div class="seas-panel${i===0?' active':''}" id="spanel_${s.season_number}">
         <div class="seas-hdr">
           <div class="seas-info">${s.name||'Season '+s.season_number} · ${s.episode_count||'?'} Episodes${s.air_date?' · '+s.air_date.slice(0,4):''}</div>
-          <a class="btn btn-green" href="https://eztvx.to/search/${sDlQ}" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download Season
-          </a>
+          <button class="btn btn-prim" onclick="loadEpOnline(${tmdbId},${s.season_number},1)" style="font-size:.72rem;padding:6px 14px">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:11px;height:11px"><path d="M5 3l14 9-14 9V3z"/></svg>
+            Watch Season
+          </button>
         </div>
         <div class="seas-prog-wrap" id="sprog_${s.season_number}"></div>
         <div class="next-ep-banner" id="nextbanner_${s.season_number}">
@@ -1620,10 +1513,6 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
             <button class="btn ${inWL?'btn-gold':'btn-sec'}" id="detWlBtn" onclick="handleDetWL()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
               ${inWL?'In Watchlist':'+ Watchlist'}
-            </button>
-            <button class="btn btn-green" onclick="document.getElementById('detDl').scrollIntoView({behavior:'smooth'})">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Download
             </button>
             <button class="btn btn-prim" onclick="document.getElementById('watchOnlineSection').scrollIntoView({behavior:'smooth'})">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
@@ -1744,14 +1633,12 @@ async function loadSeasonEps(tmdbId, sNum, title, year) {
   el.innerHTML = eps.map(ep => {
     const code = `S${String(sNum).padStart(2,'0')}E${String(ep.episode_number).padStart(2,'0')}`;
     const epQ  = encodeURIComponent(`${title} ${code}`);
-    const nkDl = `https://thenkiri.com/?s=${encodeURIComponent(title+' '+code)}`;
-    const vsDl = `https://dl.vidsrc.vip/tv/${tmdbId}/${sNum}/${ep.episode_number}`;
+    const nkDl = `https://t.me/VELOXDOWNLOADS`;
     const isW  = isEpWatched(tmdbId, sNum, ep.episode_number);
     return `<div class="ep-item${isW?' watched':''}" id="ep_${sNum}_${ep.episode_number}">
       <div class="ep-num">E${ep.episode_number}</div>
       <div class="ep-still">
         ${ep.still_path ? `<img src="${STLL}${ep.still_path}" alt="${esc(ep.name||'')}" onload="this.classList.add('loaded')" loading="lazy">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--bg4)"><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--ink3);fill:none;stroke-width:2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>`}
-        <div class="ep-dl-badge"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10" fill="none" stroke="white" stroke-width="2.5"/><line x1="12" y1="15" x2="12" y2="3" stroke="white" stroke-width="2.5"/></svg></div>
       </div>
       <div class="ep-content">
         <div class="ep-name">${esc(ep.name||'Episode '+ep.episode_number)}</div>
@@ -1762,14 +1649,8 @@ async function loadSeasonEps(tmdbId, sNum, title, year) {
         </div>
         ${ep.overview?`<div class="ep-overview">${esc(ep.overview)}</div>`:''}
         <div class="ep-acts">
-          <a class="ep-btn dl" id="vsdl_${sNum}_${ep.episode_number}" href="${vsDl}"
-             target="_blank" rel="noopener noreferrer"
-             onclick="onEpDownload(event,${tmdbId},${sNum},${ep.episode_number},'${esc(ep.name||'Episode '+ep.episode_number).replace(/'/g,"\\'")}',this)"
-             style="background:var(--burg);color:#fff;border-color:var(--burg);font-weight:800">⬇ Download</a>
           <button class="ep-btn" onclick="loadEpOnline(${tmdbId},${sNum},${ep.episode_number})"
-             style="background:transparent;color:var(--ink2);border-color:var(--bdr);font-weight:700">▶ Watch</button>
-          <a class="ep-btn dl" href="${nkDl}" target="_blank" rel="noopener noreferrer">TheNkiri</a>
-          <a class="ep-btn dl" href="https://eztvx.to/search/${epQ}" target="_blank" rel="noopener noreferrer">EZTV</a>
+             style="background:var(--burg);color:#fff;border-color:var(--burg);font-weight:800">▶ Watch</button>
           <button class="ep-btn wt${isW?' on':''}" onclick="tglEp(${tmdbId},${sNum},${ep.episode_number},this)">
             ${isW?'✓ Watched':'Mark Watched'}
           </button>
@@ -1846,7 +1727,7 @@ function showNextEpBanner(tmdbId, season, currentEpNum) {
   if (!nextRow) { banner.classList.remove('show'); return; }
 
   const nextName = nextRow.querySelector('.ep-name')?.textContent || `Episode ${nextNum}`;
-  const nextHref = `https://dl.vidsrc.vip/tv/${tmdbId}/${season}/${nextNum}`;
+  const nextHref = `https://t.me/VELOXDOWNLOADS`;
 
   if (titleEl) titleEl.textContent = `Up Next — E${nextNum}: ${nextName}`;
   if (subEl)   subEl.textContent   = `Ready to download from your list`;
