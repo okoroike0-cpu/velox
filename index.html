@@ -41,6 +41,27 @@ a{text-decoration:none;color:inherit}
 ::-webkit-scrollbar-thumb{background:var(--burg);border-radius:2px}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* DATA SAVER MODE */
+body.data-saver .det-backdrop,
+body.data-saver .hero-bg { display:none !important; }
+body.data-saver .hero-sec { background:linear-gradient(135deg,#1a0a0e,#0d0a07) !important; min-height:320px; }
+body.data-saver .card-img img { display:none !important; }
+body.data-saver .card-img { background:var(--bg4) !important; }
+
+/* NETFLIX RANK CARDS */
+.rank-car { display:flex; gap:4px; overflow-x:auto; padding:8px 0 16px; scrollbar-width:none; }
+.rank-car::-webkit-scrollbar { display:none; }
+.rank-card { position:relative; display:flex; align-items:flex-end; flex-shrink:0; cursor:pointer; }
+.rank-number {
+  font-family:'Playfair Display',serif; font-size:clamp(60px,10vw,110px);
+  font-weight:900; line-height:1; color:var(--bg);
+  -webkit-text-stroke:2px var(--ink3); margin-right:-18px; z-index:1;
+  user-select:none; pointer-events:none; transition:color .2s;
+}
+.rank-card:hover .rank-number { -webkit-text-stroke-color:var(--burg); }
+.rank-poster { width:100px; height:150px; border-radius:6px; object-fit:cover; z-index:2; box-shadow:0 8px 24px rgba(0,0,0,.6); transition:transform .2s; }
+.rank-card:hover .rank-poster { transform:scale(1.04); }
 @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
 @keyframes shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -546,6 +567,9 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         <svg viewBox="0 0 24 24" id="themeIcon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
       </div>
     </button>
+    <button class="icon-btn" onclick="toggleDataSaver()" title="Data Saver Mode" style="font-size:.7rem;font-weight:700;padding:0 8px;min-width:36px">
+      🚀
+    </button>
     <button class="mob-menu" onclick="openMob()">
       <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:18px;height:18px"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
     </button>
@@ -707,15 +731,21 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
     <aside class="sidebar">
       <div class="sidebar-sticky">
         <div class="sb-title">🔥 Trending Now</div>
-        <div id="trendList"></div>
+        <div class="rank-car" id="trendList"></div>
         <div class="tg-cta">
-          <div class="tg-icon">✈️</div>
-          <h4>Join VELOX Telegram</h4>
-          <p>Get instant alerts for new movies, series and episodes. First to know, first to download.</p>
-          <a class="tg-btn" href="https://t.me/VELOXDOWNLOADS" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            Join Channel
-          </a>
+          <div class="tg-icon">📱</div>
+          <h4>Join VELOX Community</h4>
+          <p>Get instant alerts for new movies, series and episodes. First to know, first to watch.</p>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+            <a class="tg-btn" href="https://t.me/VELOXDOWNLOADS" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Telegram Channel
+            </a>
+            <a class="tg-btn" href="https://whatsapp.com/channel/0029VbCBCoe0Qeau2MsYtX2F" target="_blank" rel="noopener" style="background:#25D366;border-color:#25D366">
+              <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              WhatsApp Channel
+            </a>
+          </div>
         </div>
       </div>
     </aside>
@@ -797,7 +827,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         <a href="https://t.me/VELOXDOWNLOAD" target="_blank" title="Telegram">
           <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </a>
-        <a href="https://wa.me/?text=Check%20out%20VELOX%20Cinema%20-%20Best%20movie%20site%20in%20Nigeria!%20https%3A%2F%2Fcomforting-dieffenbachia-5d0b8f.netlify.app" target="_blank" title="Share on WhatsApp" style="color:#25D366">
+        <a href="https://whatsapp.com/channel/0029VbCBCoe0Qeau2MsYtX2F" target="_blank" title="WhatsApp" style="color:#25D366">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </a>
       </div>
@@ -843,6 +873,7 @@ let activeFTab  = 'hollywood';
 /* ── VELOX DATABASE (Google Sheets) ── */
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTuj123LfjLTSRguWxzKwDRh88x5rpOATpDKIiFkdJxTbkXCU4u1oRbqbnPfwNtrb7KQue33cVD92g2/pub?gid=0&single=true&output=csv';
 const TG_CHANNEL = 'https://t.me/VELOXDOWNLOADS';
+const WA_CHANNEL = 'https://whatsapp.com/channel/0029VbCBCoe0Qeau2MsYtX2F';
 let veloxDB = null; // cached after first fetch
 
 async function fetchVeloxDB() {
@@ -1223,17 +1254,14 @@ async function loadCdrCar() {
 }
 
 async function loadTrending() {
-  const d = await api('/trending/all/week');
-  const items = (d.results||[]).slice(0,7).map((r,i) => toItem(r,i));
+  const d = await api('/trending/all/day');
+  const items = (d.results||[]).slice(0,10).map((r,i) => toItem(r,i));
   document.getElementById('trendList').innerHTML = items.map((t,i) => `
-    <div class="trend-item" onclick="openDetailGated(${t.id},${t.isTv})">
-      <span class="trend-rank">${i+1}</span>
-      <div class="trend-thumb">${t.img?`<img src="${t.img}" alt="${esc(t.title)}" loading="lazy" onload="this.classList.add('loaded')">`:''}</div>
-      <div class="trend-info">
-        <div class="trend-name">${esc(t.title)}</div>
-        <div class="trend-meta">${t.isTv?'Series':'Movie'}</div>
-        <div class="trend-year">${t.year}</div>
-      </div>
+    <div class="rank-card" onclick="openDetailGated(${t.id},${t.isTv})" title="${esc(t.title)}">
+      <div class="rank-number">${i+1}</div>
+      ${t.img
+        ? `<img class="rank-poster" src="${t.img}" alt="${esc(t.title)}" loading="lazy">`
+        : `<div class="rank-poster" style="background:${t.grade||'var(--bg4)'};display:flex;align-items:center;justify-content:center;font-size:1.8rem">🎬</div>`}
     </div>`).join('');
 }
 
@@ -1450,13 +1478,21 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
         </div>
       </div>
       ${isTv ? `<p style="font-size:.62rem;color:var(--ink3);margin-top:10px;line-height:1.6">📺 Loads S1E1 by default. Use episode buttons below to jump to any episode.</p>` : ''}
+      <div style="margin-top:10px;padding:10px 14px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:8px;font-size:.64rem;color:var(--ink3);line-height:1.7">
+        ⚠️ <strong style="color:var(--gold)">Safety notice:</strong> VELOX does not control ads inside the free stream player. If you see pop-ups asking you to download anything or install updates — ignore them. Stay safe!
+      </div>
     </div>
 
     <div style="display:flex;flex-wrap:wrap;gap:8px">
       <a href="${tg}" target="_blank" rel="noopener noreferrer"
          style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:6px;border:1px solid rgba(155,31,48,.35);background:var(--burg4);color:var(--burg);font-size:.74rem;font-weight:700;text-decoration:none;transition:all .2s"
          onmouseover="this.style.background='var(--bg4)'" onmouseout="this.style.background='var(--burg4)'">
-        ✈️ Join VELOX Telegram
+        ✈️ Telegram
+      </a>
+      <a href="${WA_CHANNEL}" target="_blank" rel="noopener noreferrer"
+         style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:6px;border:1px solid rgba(37,211,102,.3);background:rgba(37,211,102,.08);color:#25D366;font-size:.74rem;font-weight:700;text-decoration:none;transition:all .2s"
+         onmouseover="this.style.background='rgba(37,211,102,.15)'" onmouseout="this.style.background='rgba(37,211,102,.08)'">
+        💬 WhatsApp
       </a>
     </div>
   </div>`;
@@ -2068,6 +2104,15 @@ async function init() {
     fetchSection('hollywood',1).then(items => renderGrid('g-hollywood', items)),
   ]);
 }
+
+/* ── DATA SAVER MODE ── */
+function toggleDataSaver() {
+  const on = document.body.classList.toggle('data-saver');
+  localStorage.setItem('vx-datasaver', on);
+  showToast(on ? '🚀 Data Saver ON — images limited' : '🎬 Data Saver OFF — full quality');
+}
+// initialize on load
+if (localStorage.getItem('vx-datasaver') === 'true') document.body.classList.add('data-saver');
 
 /* ── STATIC PAGES (About / Privacy / Contact) ── */
 const PAGES = {
