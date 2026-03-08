@@ -95,12 +95,26 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .nav-btn:hover{color:var(--ink);background:var(--bg3)}
 .nav-btn.active{color:var(--burg);background:var(--burg4)}
 .nav-btn.active::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--burg);border-radius:1px}
-.hdr-r{display:flex;align-items:center;gap:8px}
+.hdr-r{display:flex;align-items:center;gap:8px;position:relative}
+
+/* SEARCH — full bar on desktop, icon+dropdown on mobile */
 .srch-wrap{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--bdr);border-radius:6px;padding:7px 12px;width:220px;transition:border-color .2s}
 .srch-wrap:focus-within{border-color:var(--burg)}
 .srch-wrap input{background:none;border:none;outline:none;font-family:inherit;font-size:.8rem;color:var(--ink);width:100%}
 .srch-wrap input::placeholder{color:var(--ink3)}
 .srch-wrap svg{width:13px;height:13px;stroke:var(--ink3);flex-shrink:0}
+/* Icon-only search button (shown on small screens) */
+.srch-icon-btn{display:none;width:36px;height:36px;border-radius:50%;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--bdr);cursor:pointer;transition:all .2s;flex-shrink:0}
+.srch-icon-btn:hover{border-color:var(--burg)}
+.srch-icon-btn svg{width:15px;height:15px;stroke:var(--ink2);fill:none}
+/* Dropdown search panel (slides down from header) */
+.srch-dropdown{display:none;position:fixed;top:var(--hh);left:0;right:0;background:var(--bg2);border-bottom:2px solid var(--burg);padding:12px 16px;z-index:499;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:fadeUp .2s ease}
+.srch-dropdown.open{display:block}
+.srch-dropdown-inner{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--burg);border-radius:8px;padding:10px 14px}
+.srch-dropdown-inner input{flex:1;background:none;border:none;outline:none;font-family:inherit;font-size:.88rem;color:var(--ink)}
+.srch-dropdown-inner input::placeholder{color:var(--ink3)}
+.srch-dropdown-inner svg{width:15px;height:15px;stroke:var(--ink3);flex-shrink:0}
+
 .icon-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--bdr);transition:all .18s;position:relative}
 .icon-btn:hover{border-color:var(--burg);background:var(--bg4)}
 .icon-btn svg{width:15px;height:15px;stroke:var(--ink3);fill:none}
@@ -523,15 +537,10 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
 .foot-soc svg{width:13px;height:13px;stroke:var(--ink3);fill:none}
 
 /* ═══════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-   1400px+ : Desktop XL (sidebar visible)
-   1300px  : Desktop (sidebar hidden, trend strip shows)
-   1100px  : Laptop
-   960px   : Tablet landscape
-   720px   : Tablet portrait
-   540px   : Mobile large
-   420px   : Mobile small
-   360px   : Mobile XS
+   SMART RESPONSIVE SYSTEM
+   Logic: As screen shrinks, sections collapse
+   into the nav dropdown. Search becomes icon.
+   Top 10 stays visible as side panel on mid screens.
 ═══════════════════════════════════════════ */
 
 /* ── DESKTOP XL: 1400px+ ── */
@@ -543,19 +552,20 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .det-title{font-size:3.4rem}
 }
 
-/* ── DESKTOP: hide sidebar, show trend strip ── */
+/* ── DESKTOP 1300px: sidebar hides, trend strip appears as horizontal row ── */
 @media(max-width:1300px){
   .main{grid-template-columns:1fr}
   .main-col{padding-right:0;border-right:none}
   .sidebar{display:none}
   .sidebar-sticky{position:relative;top:0}
   .grid{grid-template-columns:repeat(4,1fr)}
+  /* Trend strip becomes a side-floating panel next to content */
   .trend-strip{display:block}
   .hero-content{padding-left:48px}
   .det-backdrop{height:420px}
 }
 
-/* ── LAPTOP: 1100px ── */
+/* ── LAPTOP 1100px ── */
 @media(max-width:1100px){
   .foot-top{grid-template-columns:1fr 1fr}
   .mood-bar,.genre-bar{padding-left:24px;padding-right:24px}
@@ -566,16 +576,18 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hero-sec{min-height:400px}
   .hero-content{padding-left:36px;max-width:520px}
   .det-title{font-size:2.6rem}
-  .car-row{gap:10px}
+  /* C-Drama hidden at laptop — accessible via nav dropdown */
+  #sec-cdrama{display:none}
 }
 
-/* ── TABLET LANDSCAPE: 960px ── */
+/* ── TABLET LANDSCAPE 960px: nav hides, search stays as bar, K-Drama hides ── */
 @media(max-width:960px){
   :root{--hh:60px}
   .hdr{padding:0 20px}
   .nav{display:none}
   .mob-menu{display:flex}
-  .srch-wrap{width:200px}
+  /* Search still a bar but smaller */
+  .srch-wrap{width:180px}
   .hero-content{padding-left:28px;max-width:460px}
   .hero-sec{min-height:360px}
   .grid{grid-template-columns:repeat(3,1fr);gap:10px}
@@ -588,52 +600,56 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .det-acts{gap:7px}
   .btn{padding:9px 16px;font-size:.75rem}
   .foot-top{grid-template-columns:1fr 1fr}
-  .car-row{gap:8px}
   .card{flex:0 0 150px}
+  /* K-Drama & C-Drama hidden — in mobile nav dropdown */
+  #sec-kdrama,#sec-cdrama{display:none}
 }
 
-/* ── TABLET PORTRAIT: 720px ── */
+/* ── TABLET PORTRAIT 720px: search becomes icon, Nollywood hides ── */
 @media(max-width:720px){
   :root{--hh:56px}
   .hdr{padding:0 16px}
   .logo{font-size:1.3rem !important}
-  .srch-wrap{width:160px}
+  /* ★ SEARCH → icon only, dropdown appears below header */
+  .srch-wrap{display:none}
+  .srch-icon-btn{display:flex}
   .grid{grid-template-columns:repeat(3,1fr);gap:10px}
   .hero-sec{min-height:300px}
   .hero-content{padding-left:20px;max-width:100%;padding-right:20px}
   .hero-title{font-size:clamp(1.4rem,5vw,2.2rem)}
   .hero-overview{display:none}
   .hero-acts{gap:8px}
+  /* Trend strip: compact horizontal scroll */
   .trend-strip{padding:14px 16px 0}
+  .trend-strip .sb-title{font-size:.9rem}
   .trend-strip .rank-number{font-size:80px;margin-right:-16px}
   .trend-strip .rank-poster{width:80px;height:120px}
   .mood-bar,.genre-bar{padding-left:16px;padding-right:16px;gap:6px}
   .mood-chip,.genre-chip{padding:7px 12px;font-size:.68rem}
-  /* Detail page stacks vertically */
+  /* Detail page */
   .det-top{flex-direction:column;align-items:flex-start;gap:16px;margin-top:-30px}
-  .det-poster{width:100px;border-radius:8px}
+  .det-poster{width:100px}
   .det-title{font-size:1.7rem;letter-spacing:.5px}
   .det-acts{gap:6px}
   .btn{padding:8px 14px;font-size:.72rem}
   .ep-still{width:80px;height:45px}
-  .ep-row{gap:8px}
   .foot-top{grid-template-columns:1fr}
   .foot-col{display:none}
-  .foot-brand{display:block}
   .card{flex:0 0 140px}
-  .car-title{font-size:.72rem}
-  .section-hdr{padding:0 16px}
   .sec-title{font-size:1rem}
   .main{padding:0 16px 60px}
   .browse-page{padding:0 16px 60px}
+  /* Nollywood, K-Drama, C-Drama all hidden — use dropdown */
+  #sec-nollywood,#sec-kdrama,#sec-cdrama{display:none}
+  /* Genre bar hidden — mood bar stays */
+  .genre-bar{display:none}
 }
 
-/* ── MOBILE LARGE: 540px ── */
+/* ── MOBILE LARGE 540px: mood bar simplifies, genre gone ── */
 @media(max-width:540px){
   :root{--hh:52px}
   .hdr{padding:0 12px}
   .logo{font-size:1.1rem !important}
-  .srch-wrap{width:140px}
   .icon-btn{width:32px;height:32px}
   .grid{grid-template-columns:repeat(3,1fr);gap:8px}
   .hero-sec{min-height:260px}
@@ -641,69 +657,71 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hero-title{font-size:clamp(1.2rem,5.5vw,1.8rem)}
   .hero-meta{font-size:.65rem;gap:6px;flex-wrap:wrap}
   .hero-acts .btn{padding:8px 12px;font-size:.68rem}
-  .trend-strip{padding:12px 12px 0}
-  .trend-strip .rank-number{font-size:64px;margin-right:-12px}
-  .trend-strip .rank-poster{width:68px;height:100px}
-  .mood-bar,.genre-bar{padding-left:12px;padding-right:12px;gap:5px}
-  .mood-chip,.genre-chip{padding:6px 10px;font-size:.64rem;border-radius:20px}
+  /* Trend strip even more compact */
+  .trend-strip{padding:10px 12px 0}
+  .trend-strip .rank-number{font-size:60px;margin-right:-12px}
+  .trend-strip .rank-poster{width:64px;height:96px}
+  /* Mood bar: hide label, show chips only */
+  .mood-label{display:none}
+  .mood-bar{padding-top:16px}
+  .mood-chip,.genre-chip{padding:6px 10px;font-size:.63rem}
   .main{padding:0 12px 56px}
   .browse-page{padding:0 12px 56px}
-  .section-hdr{padding:0 2px}
   .sec-title{font-size:.92rem}
-  .car-row{gap:7px}
-  .card{flex:0 0 130px}
+  .card{flex:0 0 128px}
   .card-title{font-size:.68rem}
   .card-year{font-size:.6rem}
   /* Detail page */
   .det-backdrop{height:220px}
   .det-top{margin-top:-20px;gap:12px}
-  .det-poster{width:90px}
-  .det-title{font-size:1.5rem}
+  .det-poster{width:88px}
+  .det-title{font-size:1.45rem}
   .det-meta{font-size:.65rem;flex-wrap:wrap;gap:6px}
   .det-acts{gap:6px;margin-bottom:20px}
   .btn{padding:8px 12px;font-size:.7rem}
-  .dl-sec-title{font-size:.65rem}
   .ep-row{flex-direction:column;gap:6px}
-  .ep-still{width:100%;height:auto;aspect-ratio:16/9;border-radius:6px}
+  .ep-still{width:100%;height:auto;aspect-ratio:16/9}
   .ep-info{padding-left:0}
-  .cmt-composer{gap:8px}
   .sim-grid{grid-template-columns:repeat(3,1fr)}
   footer{padding:32px 20px 20px}
+  /* Series section also hides — use dropdown */
+  #sec-series{display:none}
+  /* Mood bar hides entirely — genre + mood accessible via mobile nav */
+  .mood-bar{display:none}
 }
 
-/* ── MOBILE SMALL: 420px ── */
+/* ── MOBILE SMALL 420px ── */
 @media(max-width:420px){
   .grid{grid-template-columns:repeat(2,1fr);gap:8px}
-  .card{flex:0 0 140px}
+  .card{flex:0 0 138px}
   .browse-grid{grid-template-columns:repeat(2,1fr)}
-  .srch-wrap{width:120px}
   .hero-sec{min-height:240px}
-  .trend-strip .rank-number{font-size:54px;margin-right:-10px}
-  .trend-strip .rank-poster{width:60px;height:90px}
+  .trend-strip .rank-number{font-size:50px;margin-right:-10px}
+  .trend-strip .rank-poster{width:58px;height:86px}
   .det-title{font-size:1.3rem}
-  .det-poster{width:80px}
+  .det-poster{width:78px}
   .hero-acts{flex-wrap:wrap;gap:6px}
   .sim-grid{grid-template-columns:repeat(2,1fr)}
-  .mood-chip,.genre-chip{padding:5px 9px;font-size:.62rem}
 }
 
-/* ── MOBILE XS: 360px ── */
+/* ── MOBILE XS 360px ── */
 @media(max-width:360px){
   :root{--hh:48px}
   .hdr{padding:0 10px}
-  .logo{font-size:1rem !important}
-  .srch-wrap{display:none}
+  .logo{font-size:.95rem !important;letter-spacing:2px}
   .grid{grid-template-columns:repeat(2,1fr);gap:7px}
-  .card{flex:0 0 120px}
-  .hero-sec{min-height:220px}
-  .hero-title{font-size:1.1rem}
-  .hero-acts .btn{padding:7px 10px;font-size:.64rem}
-  .det-title{font-size:1.2rem}
-  .det-poster{width:72px}
-  .btn{padding:7px 10px;font-size:.67rem}
-  .trend-strip .rank-number{font-size:46px;margin-right:-8px}
-  .trend-strip .rank-poster{width:52px;height:78px}
-  footer{padding:24px 14px 16px}
+  .card{flex:0 0 118px}
+  .hero-sec{min-height:200px}
+  .hero-title{font-size:1.05rem}
+  .hero-acts .btn{padding:7px 10px;font-size:.63rem}
+  .det-title{font-size:1.15rem}
+  .det-poster{width:68px}
+  .btn{padding:7px 10px;font-size:.66rem}
+  .trend-strip .rank-number{font-size:42px;margin-right:-8px}
+  .trend-strip .rank-poster{width:50px;height:74px}
+  footer{padding:20px 12px 16px}
+  /* Top 10 strip also hides at XS — too cramped */
+  .trend-strip{display:none}
 }
 </style>
 </head>
@@ -738,10 +756,15 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
     <button class="nav-btn" onclick="browseTo('trailers')">Trailers</button>
   </nav>
   <div class="hdr-r" style="position:relative">
-    <div class="srch-wrap">
+    <!-- Full search bar (desktop) -->
+    <div class="srch-wrap" id="srchWrap">
       <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
       <input type="text" id="srchInput" placeholder="Search any title…" autocomplete="off" oninput="handleSearch(this.value)">
     </div>
+    <!-- Icon-only search (tablet/mobile) -->
+    <button class="srch-icon-btn" id="srchIconBtn" onclick="toggleSearchDropdown()" title="Search">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+    </button>
     <div class="search-results-overlay" id="srchResults">
       <div class="sr-hdr">Results <span class="sr-close" onclick="closeSearch()">✕</span></div>
       <div id="srchList"></div>
@@ -763,6 +786,15 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
     </button>
   </div>
 </header>
+
+<!-- SEARCH DROPDOWN (mobile/tablet) -->
+<div class="srch-dropdown" id="srchDropdown">
+  <div class="srch-dropdown-inner">
+    <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+    <input type="text" id="srchInputMob" placeholder="Search movies, series, actors…" autocomplete="off" oninput="handleSearch(this.value)">
+    <button onclick="toggleSearchDropdown()" style="background:none;border:none;color:var(--ink3);font-size:1rem;cursor:pointer;padding:0 4px">✕</button>
+  </div>
+</div>
 
 <!-- MOBILE DRAWER -->
 <div class="mob-drw-ov" id="mobDrw" onclick="closeMob()">
@@ -835,7 +867,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         </div>
       </section>
 
-      <section class="sec">
+      <section class="sec" id="sec-series">
         <div class="sec-hdr">
           <div class="sec-title">📺 Popular Series <span class="sec-cnt" id="serCnt"></span></div>
           <button class="view-all" onclick="browseTo('series')">View All →</button>
@@ -847,7 +879,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         </div>
       </section>
 
-      <section class="sec">
+      <section class="sec" id="sec-nollywood">
         <div class="sec-hdr">
           <div class="sec-title">🎬 Nollywood Spotlight <span class="sec-cnt" id="nolCnt"></span></div>
           <button class="view-all" onclick="browseTo('nollywood')">View All →</button>
@@ -859,7 +891,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         </div>
       </section>
 
-      <section class="sec">
+      <section class="sec" id="sec-kdrama">
         <div class="sec-hdr">
           <div class="sec-title">🇰🇷 K-Drama <span class="sec-cnt" id="kdrCnt"></span></div>
           <button class="view-all" onclick="browseTo('kdrama')">View All →</button>
@@ -871,7 +903,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         </div>
       </section>
 
-      <section class="sec">
+      <section class="sec" id="sec-cdrama">
         <div class="sec-hdr">
           <div class="sec-title">🇨🇳 C-Drama <span class="sec-cnt" id="cdrCnt"></span></div>
           <button class="view-all" onclick="browseTo('cdrama')">View All →</button>
@@ -1533,9 +1565,21 @@ async function doSearch(q) {
 function closeSearch() {
   document.getElementById('srchResults').classList.remove('open');
   document.getElementById('srchInput').value = '';
+  const mob = document.getElementById('srchInputMob');
+  if (mob) mob.value = '';
+}
+function toggleSearchDropdown() {
+  const dd = document.getElementById('srchDropdown');
+  const isOpen = dd.classList.toggle('open');
+  if (isOpen) {
+    setTimeout(() => document.getElementById('srchInputMob').focus(), 100);
+  } else {
+    closeSearch();
+  }
 }
 document.addEventListener('click', e => {
-  if (!e.target.closest('.srch-wrap') && !e.target.closest('#srchResults')) closeSearch();
+  if (!e.target.closest('.srch-wrap') && !e.target.closest('#srchResults') 
+      && !e.target.closest('.srch-dropdown') && !e.target.closest('.srch-icon-btn')) closeSearch();
 });
 
 /* ── DOWNLOAD LINKS ── */
