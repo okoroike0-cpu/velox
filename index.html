@@ -549,9 +549,12 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .mob-menu{display:none;width:36px;height:36px;align-items:center;justify-content:center;border-radius:6px;background:var(--bg3);border:1px solid var(--bdr)}
 .mob-drw-ov{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.65)}
 .mob-drw-ov.open{display:flex;justify-content:flex-end}
-.mob-panel{width:260px;height:100%;background:var(--bg2);padding:72px 22px 36px;display:flex;flex-direction:column;gap:3px;box-shadow:-4px 0 24px rgba(0,0,0,.3);position:relative;border-left:1px solid var(--bdr)}
+.mob-panel{width:280px;height:100%;background:var(--bg2);padding:20px 18px 36px;display:flex;flex-direction:column;gap:2px;box-shadow:-4px 0 24px rgba(0,0,0,.3);position:relative;border-left:1px solid var(--bdr);overflow-y:auto}
 .mob-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer}
-.mob-nb{padding:12px 14px;border-radius:5px;font-size:.82rem;font-weight:700;letter-spacing:.5px;color:var(--ink3);text-align:left;transition:all .15s}
+/* Section labels inside drawer */
+.mob-section-label{font-size:.58rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);padding:4px 14px;margin-top:4px}
+/* ★ TAP TARGET FIX — minimum 44px hit area on all nav buttons */
+.mob-nb{min-height:44px;padding:0 14px;border-radius:6px;font-size:.82rem;font-weight:700;letter-spacing:.5px;color:var(--ink3);text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px;width:100%}
 .mob-nb:hover,.mob-nb.active{color:var(--burg);background:var(--burg4)}
 
 /* FOOTER */
@@ -738,6 +741,17 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .det-poster{width:78px}
   .hero-acts{flex-wrap:wrap;gap:6px}
   .sim-grid{grid-template-columns:repeat(2,1fr)}
+  /* ★ TAP TARGET RULE: 44px minimum on all interactive elements */
+  .btn{min-height:44px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center}
+  .icon-btn{min-width:44px;min-height:44px}
+  .srch-icon-btn{min-width:44px;min-height:44px}
+  .card-wl{width:36px;height:36px}
+  .view-all{min-height:36px;display:inline-flex;align-items:center}
+  .mood-chip,.genre-chip{min-height:36px;display:inline-flex;align-items:center}
+  .card-rb{padding:5px 9px}
+  .sort-btn{min-height:36px;padding:0 12px}
+  .mob-nb{min-height:44px}
+  .wl-close,.sr-close{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
 }
 
 /* ── MOBILE XS 360px ── */
@@ -836,15 +850,51 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
 <div class="mob-drw-ov" id="mobDrw" onclick="closeMob()">
   <div class="mob-panel" onclick="event.stopPropagation()">
     <button class="mob-x" onclick="closeMob()">✕</button>
+
+    <!-- VELOX logo inside drawer -->
+    <div class="logo" style="font-size:1.2rem;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--bdr)" onclick="goHome();closeMob()">
+      <span class="logo-v">V</span><span class="logo-el">EL</span><span class="logo-ox">OX</span>
+    </div>
+
+    <!-- BROWSE -->
+    <div class="mob-section-label">Browse</div>
     <button class="mob-nb active" onclick="goHome();closeMob()">🏠 Home</button>
     <button class="mob-nb" onclick="browseTo('hollywood');closeMob()">🎬 Hollywood</button>
     <button class="mob-nb" onclick="browseTo('series');closeMob()">📺 Series</button>
     <button class="mob-nb" onclick="browseTo('nollywood');closeMob()">🇳🇬 Nollywood</button>
     <button class="mob-nb" onclick="browseTo('kdrama');closeMob()">🇰🇷 K-Drama</button>
     <button class="mob-nb" onclick="browseTo('cdrama');closeMob()">🇨🇳 C-Drama</button>
-    <button class="mob-nb" onclick="browseTo('trailers');closeMob()">🎞 Trailers</button>
-    <button class="mob-nb" onclick="openWL();closeMob()" style="margin-top:8px;border-top:1px solid var(--bdr);padding-top:14px">📚 My Watchlist</button>
-    <button class="mob-nb" onclick="toggleTheme()">🌙 Toggle Theme</button>
+    <button class="mob-nb" onclick="browseTo('trailers');closeMob()">🎞️ Trailers</button>
+
+    <!-- MOODS -->
+    <div class="mob-section-label" style="margin-top:12px">Moods</div>
+    <button class="mob-nb" onclick="applyMood('action');closeMob()">⚡ Action</button>
+    <button class="mob-nb" onclick="applyMood('romance');closeMob()">💕 Romance</button>
+    <button class="mob-nb" onclick="applyMood('scary');closeMob()">😱 Horror</button>
+    <button class="mob-nb" onclick="applyMood('mindbend');closeMob()">🌀 Mind-Bending</button>
+    <button class="mob-nb" onclick="applyMood('comedy');closeMob()">😂 Comedy</button>
+
+    <!-- MY STUFF -->
+    <div class="mob-section-label" style="margin-top:12px">My VELOX</div>
+    <button class="mob-nb" onclick="openWL();closeMob()">📚 My Watchlist</button>
+    <button class="mob-nb" onclick="changeUser();closeMob()">👤 My Profile</button>
+
+    <!-- SETTINGS -->
+    <div class="mob-section-label" style="margin-top:12px">Settings</div>
+    <button class="mob-nb" onclick="toggleTheme();closeMob()">🌙 Toggle Theme</button>
+    <button class="mob-nb" onclick="toggleDataSaver();closeMob()">🚀 Data Saver</button>
+
+    <!-- COMMUNITY -->
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;flex-direction:column;gap:8px">
+      <a href="https://t.me/VELOXDOWNLOADS" target="_blank" rel="noopener"
+         class="mob-nb" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink3)">
+        ✈️ Telegram Channel
+      </a>
+      <a href="https://whatsapp.com/channel/0029VbCBCoe0Qeau2MsYtX2F" target="_blank" rel="noopener"
+         class="mob-nb" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#25D366">
+        💬 WhatsApp Channel
+      </a>
+    </div>
   </div>
 </div>
 
