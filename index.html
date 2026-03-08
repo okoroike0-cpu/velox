@@ -861,8 +861,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
 ═══════════════════════════════ */
 
 /* ── FIX 1: Use Bearer token instead of api_key param ── */
-const TK   = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlMTYzYTZkOTA5M2M1NDZlM2Q0NTUxOTdjMDUxYzY4NyIsIm5iZiI6MTc1MTI4NjAyMS40NTgsInN1YiI6IjY4NjI4MTA1NzY0ODQ1N2RmZjIyOWM0MSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.63z14TUH78eWAIfDqDnBl2arUyqS7dXYSY3ZtjpQLHo";
-const H    = { headers: { Authorization: `Bearer ${TK}` } };
+const WORKER = 'https://velox-tmdb-proxy.ikoromichael592.workers.dev';
 const IMG  = "https://image.tmdb.org/t/p/w342";
 const ORIG = "https://image.tmdb.org/t/p/w500";
 const BG   = "https://image.tmdb.org/t/p/w1280";
@@ -939,10 +938,10 @@ async function getVeloxLinks(tmdbId, isTv) {
 }
 
 
-/* ── API ── */
+/* ── API (via Cloudflare Worker — key hidden) ── */
 async function api(path) {
   try {
-    const r = await fetch(`https://api.themoviedb.org/3${path}`, H);
+    const r = await fetch(`${WORKER}?path=${encodeURIComponent(path)}`);
     if (!r.ok) { console.error('TMDB', r.status, path); return {}; }
     return await r.json();
   } catch(e) { console.error('Fetch failed', e); return {}; }
