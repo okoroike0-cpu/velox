@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>VELOX Cinema — Watch Movies & Series Online | Nigeria</title>
 <meta name="description" content="Discover movies and series on VELOX Cinema. Find where to watch on Netflix, Showmax, Amazon Prime. Hollywood, Nollywood, K-Drama, C-Drama — all in one place.">
 <meta name="keywords" content="movies Nigeria, watch movies online Nigeria, Nollywood, Netflix Nigeria, Showmax Nigeria, K-Drama, series, VELOX cinema">
@@ -33,12 +33,33 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:'Barlow',sans-serif;overflow-x:hidden;min-height:100vh;transition:background .3s,color .3s}
+body{background:var(--bg);color:var(--ink);font-family:'Barlow',sans-serif;overflow-x:hidden;min-height:100vh;transition:background .3s,color .3s;
+  /* Safe area padding for home bar on iPhones */
+  padding-bottom:env(safe-area-inset-bottom);
+}
 button{cursor:pointer;border:none;background:none;color:inherit;font-family:inherit}
 img{display:block;max-width:100%}
 a{text-decoration:none;color:inherit}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--burg);border-radius:2px}
+
+/* SAFE AREA — notch, Dynamic Island, home bar support */
+.hdr{
+  /* Push header content below the notch/Dynamic Island */
+  padding-top:env(safe-area-inset-top);
+  height:calc(var(--hh) + env(safe-area-inset-top));
+}
+.srch-dropdown{
+  /* Dropdown starts below the taller header */
+  top:calc(var(--hh) + env(safe-area-inset-top));
+}
+footer{
+  padding-bottom:calc(28px + env(safe-area-inset-bottom));
+}
+.mob-panel{
+  /* Mobile drawer respects home bar */
+  padding-bottom:calc(36px + env(safe-area-inset-bottom));
+}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
