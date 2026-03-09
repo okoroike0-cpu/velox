@@ -119,6 +119,46 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .nav-btn.active::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--burg);border-radius:1px}
 .hdr-r{display:flex;align-items:center;gap:8px;position:relative}
 
+/* ── DETAIL PAGE MOBILE SECTION FIXES ── */
+@media(max-width:540px){
+  /* Provider pills — horizontal scroll instead of wrapping */
+  .prov-row{display:flex;flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;gap:8px}
+  .prov-row::-webkit-scrollbar{display:none}
+  /* Season tabs — horizontal scroll */
+  .seas-tabs{overflow-x:auto;scrollbar-width:none;display:flex;padding-bottom:2px;gap:6px}
+  .seas-tabs::-webkit-scrollbar{display:none}
+  .seas-tab{flex-shrink:0;padding:7px 14px;font-size:.66rem;white-space:nowrap;min-height:36px}
+  /* Episode */
+  .ep-title{font-size:.78rem}
+  .ep-desc{font-size:.7rem;-webkit-line-clamp:2}
+  .ep-meta{flex-wrap:wrap;gap:4px}
+  /* Cast */
+  .cast-card{width:68px}
+  .cast-av{width:56px;height:56px}
+  .cast-name{font-size:.58rem}
+  .cast-role{font-size:.52rem}
+  /* Similar — 3 col on 540 */
+  .sim-grid{grid-template-columns:repeat(3,1fr);gap:7px}
+  .sim-name{font-size:.62rem}
+  /* Section blocks */
+  .dl-sec{padding:14px;border-radius:10px;margin-bottom:14px}
+  .dl-sec-title{font-size:.63rem;letter-spacing:1.4px;margin-bottom:12px}
+  /* Comment */
+  .cmt-hdr{flex-wrap:wrap;gap:8px}
+  .composer-input{font-size:.8rem}
+}
+@media(max-width:420px){
+  .sim-grid{grid-template-columns:repeat(2,1fr)}
+  .cast-card{width:60px}
+  .cast-av{width:50px;height:50px}
+}
+/* Back button — fixed, safe area aware */
+.det-pg .det-back{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:14px;z-index:900}
+@media(max-width:540px){
+  .det-pg .det-back{padding:8px 14px;font-size:.68rem;border-radius:20px;background:rgba(13,10,7,.88)}
+  [data-theme="light"] .det-pg .det-back{background:rgba(246,241,233,.93)}
+}
+
 /* SEARCH — full bar on desktop, icon+dropdown on mobile */
 .srch-wrap{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--bdr);border-radius:6px;padding:7px 12px;width:220px;transition:border-color .2s}
 .srch-wrap:focus-within{border-color:var(--burg)}
@@ -294,6 +334,22 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 @keyframes newEpPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(1.05)}}
 .ep-air-today{background:var(--gold);color:#0d0a07}
 .ep-air-week{background:#25D366;color:#fff}
+
+/* BROWSE CONTROLS — sort bar + country bar inside browse page */
+.browse-controls{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bdr)}
+.browse-controls .sort-bar{margin-bottom:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.browse-controls .sort-bar::-webkit-scrollbar{display:none}
+.browse-country-scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1}
+.browse-country-scroll::-webkit-scrollbar{display:none}
+.browse-country-scroll .sort-btn{flex-shrink:0}
+@media(max-width:720px){
+  .browse-controls .sort-label{display:none}
+  .browse-controls .sort-bar{gap:6px}
+  .browse-controls .sort-btn{padding:6px 12px;font-size:.62rem}
+}
+@media(max-width:540px){
+  .browse-controls .sort-btn{padding:5px 10px;font-size:.6rem;min-height:36px}
+}
 
 /* MOVIE SORT BAR */
 .sort-bar{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
@@ -694,11 +750,19 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .trend-strip{display:none !important}
   .mood-bar,.genre-bar{padding-left:16px;padding-right:16px;gap:6px}
   .mood-chip,.genre-chip{padding:7px 12px;font-size:.68rem}
-  /* Detail page */
-  .det-top{flex-direction:column;align-items:flex-start;gap:16px;margin-top:-30px}
+  /* Detail page — tablet portrait 720px */
+  .det-back{top:12px;left:12px;padding:7px 12px;font-size:.68rem}
+  .det-backdrop{height:230px}
+  .det-body{padding:0 16px 80px}
+  .det-top{flex-direction:row;align-items:flex-end;gap:14px;margin-top:-55px;margin-bottom:18px}
   .det-poster{width:100px}
-  .det-title{font-size:1.7rem;letter-spacing:.5px}
-  .det-acts{gap:6px}
+  .det-info{padding-bottom:2px}
+  .det-title{font-size:1.55rem;letter-spacing:.2px;line-height:1.1;margin-bottom:8px}
+  .det-meta{font-size:.63rem;gap:5px;margin-bottom:8px}
+  .det-badge{padding:2px 7px;font-size:.59rem}
+  .det-genres{display:none}
+  .det-desc{font-size:.82rem;line-height:1.72;margin-bottom:14px}
+  .det-acts{gap:7px;flex-wrap:wrap;margin-bottom:18px}
   .btn{padding:8px 14px;font-size:.72rem}
   .ep-still{width:80px;height:45px}
   .foot-top{grid-template-columns:1fr}
@@ -707,9 +771,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .sec-title{font-size:1rem}
   .main{padding:0 16px 60px}
   .browse-page{padding:0 16px 60px}
-  /* Nollywood, K-Drama, C-Drama all hidden — use dropdown */
   #sec-nollywood,#sec-kdrama,#sec-cdrama{display:none}
-  /* Genre bar hidden — mood bar stays */
   .genre-bar{display:none}
 }
 
@@ -737,18 +799,27 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .card{flex:0 0 128px}
   .card-name{font-size:.68rem}
   .card-year{font-size:.6rem}
-  /* ★ COMPACT: Detail page centered like Netflix mobile */
-  .det-backdrop{height:220px}
-  .det-top{flex-direction:column;align-items:center;text-align:center;margin-top:-60px;gap:12px}
-  .det-poster{width:140px;box-shadow:0 10px 30px rgba(0,0,0,.6)}
-  .det-title{font-size:1.45rem;text-align:center}
-  .det-meta{font-size:.65rem;flex-wrap:wrap;gap:6px;justify-content:center}
-  .det-acts{gap:6px;margin-bottom:20px;justify-content:center}
-  .btn{padding:8px 12px;font-size:.7rem}
+  /* ★ MOBILE 540px — full mobile detail redesign */
+  .det-backdrop{height:200px}
+  .det-body{padding:0 14px 72px}
+  /* Poster left-floated, info right — classic mobile app style */
+  .det-top{flex-direction:row;align-items:flex-end;gap:12px;margin-top:-50px;margin-bottom:16px;text-align:left}
+  .det-poster{width:95px;box-shadow:0 8px 24px rgba(0,0,0,.65)}
+  .det-info{padding-bottom:0}
+  .det-title{font-size:1.25rem;letter-spacing:.1px;line-height:1.1;margin-bottom:7px;text-align:left}
+  .det-meta{font-size:.6rem;gap:4px;margin-bottom:8px;justify-content:flex-start}
+  .det-badge{padding:2px 7px;font-size:.57rem}
+  .det-genres{display:none}
+  .det-rating{font-size:.75rem}
+  .det-desc{font-size:.8rem;line-height:1.7;margin-bottom:14px;max-width:100%}
+  /* Buttons — full width stacked on mobile */
+  .det-acts{flex-direction:column;gap:8px;margin-bottom:18px;align-items:stretch}
+  .det-acts .btn,.det-acts a{width:100%;justify-content:center;min-height:46px;font-size:.78rem;border-radius:8px}
   .ep-row{flex-direction:column;gap:6px}
-  .ep-still{width:100%;height:auto;aspect-ratio:16/9}
-  .ep-info{padding-left:0}
-  .sim-grid{grid-template-columns:repeat(2,1fr)}
+  .ep-still{width:100%;height:auto;aspect-ratio:16/9;border-radius:6px}
+  .ep-info{padding-left:0;padding-top:6px}
+  .sim-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .dl-sec-title{font-size:.65rem}
   footer{padding:32px 20px 20px}
   #sec-series,#sec-nollywood,#sec-kdrama,#sec-cdrama{display:none}
   .mood-bar,.genre-bar{display:none}
@@ -762,12 +833,17 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hero-sec{min-height:240px}
   .trend-strip .rank-number{font-size:50px;margin-right:-10px}
   .trend-strip .rank-poster{width:58px;height:86px}
-  .det-title{font-size:1.3rem}
-  .det-poster{width:78px}
+  /* Detail page 420px */
+  .det-backdrop{height:185px}
+  .det-top{gap:10px;margin-top:-44px}
+  .det-poster{width:82px}
+  .det-title{font-size:1.12rem}
+  .det-meta{gap:3px}
   .hero-acts{flex-wrap:wrap;gap:6px}
   .sim-grid{grid-template-columns:repeat(2,1fr)}
   /* ★ TAP TARGET RULE: 44px minimum on all interactive elements */
   .btn{min-height:44px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center}
+  .det-acts .btn,.det-acts a{min-height:48px}
   .icon-btn{min-width:44px;min-height:44px}
   .srch-icon-btn{min-width:44px;min-height:44px}
   .card-wl{width:36px;height:36px}
@@ -789,29 +865,21 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hero-sec{min-height:200px}
   .hero-title{font-size:1.05rem}
   .hero-acts .btn{padding:7px 10px;font-size:.63rem}
-  .det-title{font-size:1.15rem}
-  .det-poster{width:68px}
+  /* Detail 360px */
+  .det-backdrop{height:165px}
+  .det-top{gap:9px;margin-top:-40px}
+  .det-poster{width:72px}
+  .det-title{font-size:1rem;margin-bottom:5px}
+  .det-badge{padding:1px 6px;font-size:.55rem}
+  .det-desc{font-size:.77rem;line-height:1.65}
+  .det-acts .btn,.det-acts a{min-height:44px;font-size:.72rem}
   .btn{padding:7px 10px;font-size:.66rem}
   .trend-strip .rank-number{font-size:42px;margin-right:-8px}
   .trend-strip .rank-poster{width:50px;height:74px}
   footer{padding:20px 12px 16px}
   .trend-strip{display:none}
-
-  /* ★ SECRET WEAPON: pixel-perfect text on low-res budget screens */
-  body{
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    text-rendering:optimizeLegibility;
-  }
-
-  /* ★ FORCE 1-LINE TITLES: keeps 2-column grid perfectly even */
-  /* Without this, a long title like "The Transformer Returns" */
-  /* wraps to 2 lines and makes one card taller than the other */
-  .card-name{
-    display:-webkit-box;
-    -webkit-line-clamp:1;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
+  body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+  .card-name{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;
   }
@@ -1495,7 +1563,6 @@ const BROWSE_LABELS = {
 
 async function browseTo(type, filter='') {
   browseType = type;
-  browsePages[type] = browsePages[type] || 1;
   browsePages[type] = 1;
   currentView = 'browse';
   document.getElementById('pgHome').style.display = 'none';
@@ -1504,74 +1571,143 @@ async function browseTo(type, filter='') {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   const navMap = { hollywood:1, series:2, nollywood:3, kdrama:4, cdrama:5, trailers:6 };
   const navBtns = document.querySelectorAll('.nav-btn');
-  if (navMap[type] !== undefined) navBtns[navMap[type]].classList.add('active');
+  if (navMap[type] !== undefined) navBtns[navMap[type]]?.classList.add('active');
+
   const label = BROWSE_LABELS[type] || type;
   const inner = document.getElementById('browseInner');
+
+  // ── Build the right controls for this section ──
+  let controlsHtml = '';
+
+  if (type === 'hollywood' || type === 'nollywood' || type === 'kdrama' || type === 'cdrama' || type === 'trailers') {
+    // Movie sort bar — pre-select whatever is currently active
+    const modes = [['week','This Week'],['month','This Month'],['year','This Year'],['alltime','All Time']];
+    controlsHtml = `
+      <div class="browse-controls">
+        <div class="sort-bar" id="browseSortBar">
+          <span class="sort-label">Sort by:</span>
+          ${modes.map(([m,l]) => `<button class="sort-btn${movieSortMode===m?' active':''}" onclick="setBrowseSort('${m}',this,'${type}')">${l}</button>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  if (type === 'series') {
+    // Country filter bar — pre-select whatever is currently active
+    const countries = [
+      ['all','🌍 All'],['US','🇺🇸 USA'],['GB','🇬🇧 UK'],
+      ['NG','🇳🇬 Nigeria'],['KR','🇰🇷 K-Drama'],['CN','🇨🇳 C-Drama'],
+      ['JP','🇯🇵 Japan'],['IN','🇮🇳 India'],['TR','🇹🇷 Turkey'],
+      ['ES','🇪🇸 Spain'],['FR','🇫🇷 France']
+    ];
+    controlsHtml = `
+      <div class="browse-controls">
+        <div class="sort-bar" id="browseCountryBar">
+          <span class="sort-label">Country:</span>
+          <div class="browse-country-scroll">
+            ${countries.map(([c,l]) => `<button class="sort-btn${seriesCountry===c?' active':''}" onclick="setBrowseCountry('${c}',this)">${l}</button>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+
   inner.innerHTML = `
     <div class="browse-hdr">
-      <h1>${label.replace(/(.)(.*)/, (_, f, r) => `${f}<em>${r}</em>`)}</h1>
+      <h1>${label.replace(/(.)(.*)/, (_,f,r) => `${f}<em>${r}</em>`)}</h1>
     </div>
+    ${controlsHtml}
     <div class="browse-grid" id="browseGrid"></div>
-    <button class="browse-load-more" id="browseMore" onclick="loadBrowseMore('${type}','${filter}')">Load More</button>`;
+    <button class="browse-load-more" id="browseMore" onclick="loadBrowseMore('${type}')">Load More</button>`;
+
   gridSkels('browseGrid', 20);
-  const items = await fetchSection(type, 1, filter);
+  const items = await fetchBrowse(type, 1);
   renderGrid('browseGrid', items);
   const btn = document.getElementById('browseMore');
   if (btn && items.length < 15) btn.style.display = 'none';
 }
 
-async function loadBrowseMore(type, filter) {
+async function loadBrowseMore(type) {
   browsePages[type]++;
   const btn = document.getElementById('browseMore');
   if (btn) btn.textContent = 'Loading…';
-  const items = await fetchSection(type, browsePages[type], filter);
+  const items = await fetchBrowse(type, browsePages[type]);
   renderGrid('browseGrid', items, true);
   if (btn) { btn.textContent = 'Load More'; if (items.length < 5) btn.disabled = true; }
 }
 
-/* ── DATA FETCHER ── */
-async function fetchSection(type, page=1, filter='') {
-  let items = [];
-  if (filter.startsWith('mood:')) {
-    const [,genres,sort] = filter.split(':');
-    const d = await api(`/discover/movie?sort_by=${sort}&with_genres=${genres}&vote_count.gte=100&page=${page}`);
-    return (d.results||[]).map((r,i) => toItem(r,i));
-  }
-  if (filter.startsWith('genre:')) {
-    const gid = filter.split(':')[1];
-    const d = await api(`/discover/movie?sort_by=popularity.desc&with_genres=${gid}&page=${page}`);
-    return (d.results||[]).map((r,i) => toItem(r,i));
-  }
+function setBrowseSort(mode, btn, type) {
+  movieSortMode = mode;
+  document.querySelectorAll('#browseSortBar .sort-btn').forEach(b => b.classList.remove('active'));
+  // also sync home sort bar if visible
+  document.querySelectorAll('#movieSortBar .sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  browsePages[type] = 1;
+  gridSkels('browseGrid', 20);
+  fetchBrowse(type, 1).then(items => renderGrid('browseGrid', items));
+}
+
+function setBrowseCountry(country, btn) {
+  seriesCountry = country;
+  seriesCache = {}; // clear cache so home carousel also refreshes
+  document.querySelectorAll('#browseCountryBar .sort-btn').forEach(b => b.classList.remove('active'));
+  // also sync home genre tabs
+  document.querySelectorAll('.ser-gtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  browsePages['series'] = 1;
+  gridSkels('browseGrid', 20);
+  fetchBrowse('series', 1).then(items => renderGrid('browseGrid', items));
+}
+
+/* ── UNIFIED BROWSE FETCHER — respects sort mode and country filter ── */
+async function fetchBrowse(type, page=1) {
+  const today    = new Date().toISOString().slice(0,10);
+  const weekAgo  = new Date(Date.now()-7*86400000).toISOString().slice(0,10);
+  const monthAgo = new Date(Date.now()-30*86400000).toISOString().slice(0,10);
+  const yearAgo  = new Date(Date.now()-365*86400000).toISOString().slice(0,10);
+
   if (type === 'hollywood') {
-    const d = await api(`/discover/movie?sort_by=popularity.desc&page=${page}`);
-    items = (d.results||[]).map((r,i) => toItem(r,i));
-  } else if (type === 'series') {
-    const d = await api(`/discover/tv?sort_by=popularity.desc&vote_count.gte=20&page=${page}`);
-    items = (d.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'📺'}));
-  } else if (type === 'nollywood') {
+    let endpoint;
+    if      (movieSortMode==='week')  endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${weekAgo}&primary_release_date.lte=${today}&vote_count.gte=5&page=${page}`;
+    else if (movieSortMode==='month') endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${monthAgo}&primary_release_date.lte=${today}&vote_count.gte=10&page=${page}`;
+    else if (movieSortMode==='year')  endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${yearAgo}&primary_release_date.lte=${today}&vote_count.gte=20&page=${page}`;
+    else                              endpoint = `/movie/popular?page=${page}`;
+    const d = await api(endpoint);
+    return (d.results||[]).map((r,i) => toItem(r,i));
+  }
+
+  if (type === 'series') {
+    // Respect the selected country
+    const country = seriesCountry;
+    let endpoint;
+    if (country === 'all') endpoint = `/discover/tv?sort_by=popularity.desc&vote_count.gte=20&page=${page}`;
+    else                   endpoint = `/discover/tv?with_origin_country=${country}&sort_by=popularity.desc&vote_count.gte=5&page=${page}`;
+    const d = await api(endpoint);
+    return (d.results||[]).map((r,i) => ({...toItem(r,i), isTv:true}));
+  }
+
+  if (type === 'nollywood') {
     const [tv, mv] = await Promise.all([
       api(`/discover/tv?with_origin_country=NG&sort_by=popularity.desc&page=${page}`),
       api(`/discover/movie?with_origin_country=NG&sort_by=popularity.desc&page=${page}`),
     ]);
-    const tvi = (tv.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'🎬'}));
-    const mvi = (mv.results||[]).map((r,i) => ({...toItem(r,i+10), flag:'🇳🇬'}));
-    items = [...mvi, ...tvi].sort(() => Math.random()-.5);
-  } else if (type === 'kdrama') {
-    const d = await api(`/discover/tv?with_origin_country=KR&with_genres=18&sort_by=popularity.desc&vote_count.gte=10&page=${page}`);
-    items = (d.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'🇰🇷'}));
-  } else if (type === 'cdrama') {
-    const [tv, mv] = await Promise.all([
-      api(`/discover/tv?with_original_language=zh&sort_by=popularity.desc&page=${page}`),
-      api(`/discover/movie?with_original_language=zh&sort_by=popularity.desc&page=${page}`),
-    ]);
-    const tvi = (tv.results||[]).slice(0,12).map((r,i) => ({...toItem(r,i), isTv:true, flag:'🇨🇳'}));
-    const mvi = (mv.results||[]).slice(0,8).map((r,i) => ({...toItem(r,i+12), flag:'🇨🇳'}));
-    items = [...tvi, ...mvi];
-  } else if (type === 'trailers') {
-    const d = await api(`/movie/upcoming?page=${page}`);
-    items = (d.results||[]).map((r,i) => toItem(r,i));
+    return [...(mv.results||[]).map((r,i) => toItem(r,i)), ...(tv.results||[]).map((r,i) => ({...toItem(r,i+10), isTv:true}))]
+      .sort(()=>Math.random()-.5);
   }
-  return items;
+
+  if (type === 'kdrama') {
+    const d = await api(`/discover/tv?with_origin_country=KR&sort_by=popularity.desc&vote_count.gte=10&page=${page}`);
+    return (d.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'🇰🇷'}));
+  }
+
+  if (type === 'cdrama') {
+    const d = await api(`/discover/tv?with_origin_country=CN&sort_by=popularity.desc&page=${page}`);
+    return (d.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'🇨🇳'}));
+  }
+
+  if (type === 'trailers') {
+    const d = await api(`/movie/upcoming?page=${page}`);
+    return (d.results||[]).map((r,i) => toItem(r,i));
+  }
+  return [];
 }
 
 /* ── HOME SECTIONS ── */
@@ -1902,7 +2038,7 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
         <span style="font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3)">🌍 Where to Watch Legally</span>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:10px">
+      <div class="prov-row" style="display:flex;flex-wrap:wrap;gap:10px">
         ${streamProviders.map(p => {
           const logoUrl = p.logo_path ? `https://image.tmdb.org/t/p/original${p.logo_path}` : '';
           const searchUrl = `https://www.google.com/search?q=watch+${encodeURIComponent(title)}+on+${encodeURIComponent(p.provider_name)}`;
@@ -1919,7 +2055,7 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
     </div>` : `
     <div style="margin-bottom:18px">
       <div style="font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">🌍 Where to Watch Legally</div>
-      <div style="display:flex;flex-wrap:wrap;gap:9px">
+      <div class="prov-row" style="display:flex;flex-wrap:wrap;gap:9px">
         <a href="https://www.netflix.com/search?q=${encodeURIComponent(title)}" target="_blank" rel="noopener noreferrer"
            style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;background:var(--bg3);border:1px solid var(--bdr);color:var(--ink);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s"
            onmouseover="this.style.borderColor='#E50914';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.transform=''">
