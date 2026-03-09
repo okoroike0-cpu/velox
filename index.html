@@ -151,6 +151,16 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 
 /* HERO */
 .hero{position:relative;height:100vh;min-height:620px;display:flex;align-items:flex-end;padding-bottom:90px;overflow:hidden;margin-top:calc(-1 * var(--hh))}
+/* ★ FIX: Hero too tall on mobile — clamp to max 70vh so poster doesn't eat the whole screen */
+@media(max-width:720px){
+  .hero{height:70vh;min-height:320px;padding-bottom:48px;align-items:flex-end}
+}
+@media(max-width:540px){
+  .hero{height:60vh;min-height:280px;padding-bottom:36px}
+}
+@media(max-width:360px){
+  .hero{height:55vh;min-height:240px;padding-bottom:28px}
+}
 .hero-bg{position:absolute;inset:0;z-index:0}
 .hero-bg img{width:100%;height:100%;object-fit:cover;animation:heroZoom 22s ease-in-out infinite alternate;opacity:0;transition:opacity .8s}
 .hero-bg img.loaded{opacity:1}
@@ -279,7 +289,27 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .gcrd-rb{position:absolute;top:6px;right:6px;background:rgba(13,10,7,.82);backdrop-filter:blur(4px);color:var(--gold);font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:4px;z-index:2}
 .gcrd-flag{position:absolute;top:6px;left:6px;font-size:.85rem;z-index:2;filter:drop-shadow(0 1px 2px rgba(0,0,0,.8))}
 
-/* SEARCH RESULTS */
+/* NEW EPISODE BADGE */
+.new-ep-badge{position:absolute;top:7px;left:7px;background:var(--burg);color:#fff;font-size:.52rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 7px;border-radius:3px;z-index:5;animation:newEpPulse 2s ease-in-out infinite}
+@keyframes newEpPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(1.05)}}
+.ep-air-today{background:var(--gold);color:#0d0a07}
+.ep-air-week{background:#25D366;color:#fff}
+
+/* MOVIE SORT BAR */
+.sort-bar{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.sort-label{font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-right:4px}
+.sort-btn{padding:6px 14px;border-radius:20px;font-size:.66rem;font-weight:700;letter-spacing:.5px;border:1px solid var(--bdr);color:var(--ink3);transition:all .2s;cursor:pointer;background:var(--bg3)}
+.sort-btn:hover{border-color:var(--burg);color:var(--ink)}
+.sort-btn.active{background:var(--burg);border-color:var(--burg);color:#fff}
+
+/* SERIES GENRE TABS */
+.ser-genre-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:12px 0 4px;margin-bottom:-4px}
+.ser-genre-tabs::-webkit-scrollbar{display:none}
+.ser-gtab{padding:5px 14px;border-radius:20px;font-size:.64rem;font-weight:700;letter-spacing:.5px;border:1px solid var(--bdr);color:var(--ink3);cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0;background:var(--bg3)}
+.ser-gtab:hover{border-color:var(--burg);color:var(--ink)}
+.ser-gtab.active{background:var(--burg);border-color:var(--burg);color:#fff}
+/* New episode dot on genre tab */
+.ser-gtab .ep-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin-left:5px;vertical-align:middle;animation:newEpPulse 2s infinite}
 .search-results-overlay{display:none;position:absolute;top:calc(var(--hh) + 6px);left:50%;transform:translateX(-50%);width:520px;max-width:90vw;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--sh3);z-index:600;max-height:70vh;overflow-y:auto}
 .search-results-overlay.open{display:block}
 .sr-item{display:flex;gap:10px;padding:10px 14px;cursor:pointer;transition:background .2s;align-items:center}
@@ -965,8 +995,16 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
     <div class="main-col">
       <section class="sec">
         <div class="sec-hdr">
-          <div class="sec-title">New This Week <span class="sec-cnt" id="ntwCnt"></span></div>
+          <div class="sec-title">🎬 Movies <span class="sec-cnt" id="ntwCnt"></span></div>
           <button class="view-all" onclick="browseTo('hollywood')">View All →</button>
+        </div>
+        <!-- Sort by time period -->
+        <div class="sort-bar" id="movieSortBar">
+          <span class="sort-label">Sort:</span>
+          <button class="sort-btn active" onclick="sortMovies('week',this)">This Week</button>
+          <button class="sort-btn" onclick="sortMovies('month',this)">This Month</button>
+          <button class="sort-btn" onclick="sortMovies('year',this)">This Year</button>
+          <button class="sort-btn" onclick="sortMovies('alltime',this)">All Time</button>
         </div>
         <div class="car-wrap">
           <div class="car-nav" onclick="scrollCar('ntwCar',-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
@@ -984,10 +1022,24 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
 
       <section class="sec" id="sec-series">
         <div class="sec-hdr">
-          <div class="sec-title">📺 Popular Series <span class="sec-cnt" id="serCnt"></span></div>
+          <div class="sec-title">📺 Series <span class="sec-cnt" id="serCnt"></span></div>
           <button class="view-all" onclick="browseTo('series')">View All →</button>
         </div>
-        <div class="car-wrap">
+        <!-- Country tabs for series -->
+        <div class="ser-genre-tabs" id="serGenreTabs">
+          <div class="ser-gtab active" onclick="switchSerCountry('all',this)">🌍 All <span class="ep-dot"></span></div>
+          <div class="ser-gtab" onclick="switchSerCountry('US',this)">🇺🇸 USA</div>
+          <div class="ser-gtab" onclick="switchSerCountry('GB',this)">🇬🇧 UK</div>
+          <div class="ser-gtab" onclick="switchSerCountry('NG',this)">🇳🇬 Nigeria</div>
+          <div class="ser-gtab" onclick="switchSerCountry('KR',this)">🇰🇷 K-Drama</div>
+          <div class="ser-gtab" onclick="switchSerCountry('CN',this)">🇨🇳 C-Drama</div>
+          <div class="ser-gtab" onclick="switchSerCountry('JP',this)">🇯🇵 Japan</div>
+          <div class="ser-gtab" onclick="switchSerCountry('IN',this)">🇮🇳 India</div>
+          <div class="ser-gtab" onclick="switchSerCountry('TR',this)">🇹🇷 Turkey</div>
+          <div class="ser-gtab" onclick="switchSerCountry('ES',this)">🇪🇸 Spain</div>
+          <div class="ser-gtab" onclick="switchSerCountry('FR',this)">🇫🇷 France</div>
+        </div>
+        <div class="car-wrap" style="margin-top:12px">
           <div class="car-nav" onclick="scrollCar('serCar',-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
           <div class="car" id="serCar"></div>
           <div class="car-nav right" onclick="scrollCar('serCar',1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
@@ -1273,6 +1325,12 @@ async function api(path) {
 
 function toItem(r, i=0) {
   const isTv = !!r.first_air_date || r.media_type === 'tv';
+  // Detect new episode: last_air_date within 7 days = new this week, within 1 day = today
+  const lastAir = r.last_air_date || '';
+  const daysSinceAir = lastAir ? Math.floor((Date.now() - new Date(lastAir)) / 86400000) : 999;
+  const newEpToday = isTv && daysSinceAir <= 1;
+  const newEpWeek  = isTv && daysSinceAir <= 7 && !newEpToday;
+  const newEp      = isTv && daysSinceAir <= 14; // within 2 weeks
   return {
     id: r.id, title: r.title || r.name || '', isTv,
     year: (r.release_date || r.first_air_date || '').slice(0,4),
@@ -1280,6 +1338,9 @@ function toItem(r, i=0) {
     backdrop: r.backdrop_path ? BG + r.backdrop_path : null,
     rating: r.vote_average || 0,
     grade: GRADS[i % GRADS.length],
+    lastAirDate: lastAir,
+    newEpToday, newEpWeek, newEp,
+    genreIds: r.genre_ids || [],
   };
 }
 
@@ -1313,11 +1374,17 @@ function gcrdRating(rating) {
 /* ── CARD HTML ── */
 function cardHtml(item) {
   const saved = isInWL(item.id);
+  // New episode badge — only on TV series
+  let epBadge = '';
+  if (item.newEpToday) epBadge = `<div class="new-ep-badge ep-air-today">🔴 NEW TODAY</div>`;
+  else if (item.newEpWeek) epBadge = `<div class="new-ep-badge ep-air-week">✅ NEW THIS WEEK</div>`;
+  else if (item.newEp)    epBadge = `<div class="new-ep-badge">🆕 NEW EPISODE</div>`;
   return `
   <div class="card" onclick="openDetailGated(${item.id},${!!item.isTv})">
     <div class="card-thumb">
       ${posterImg(item)}
-      ${starBadge(item.rating)}
+      ${epBadge}
+      ${!epBadge ? starBadge(item.rating) : `<div class="card-rb" style="top:${item.newEp?'32px':'7px'}"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>${item.rating.toFixed(1)}</div>`}
       ${item.flag ? `<div class="card-flag">${item.flag}</div>` : ''}
       <button class="card-wl${saved?' saved':''}" data-id="${item.id}" onclick="event.stopPropagation();tglWL(${item.id})" title="Watchlist">
         <svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -1331,7 +1398,7 @@ function cardHtml(item) {
     </div>
     <div class="card-info">
       <div class="card-name">${esc(item.title)}</div>
-      <div class="card-sub">${item.rating>0?'<span style="color:var(--gold);font-weight:700">★ '+item.rating.toFixed(1)+'</span>':''}${item.year?' · '+item.year:''}</div>
+      <div class="card-sub">${item.rating>0?'<span style="color:var(--gold);font-weight:700">★ '+item.rating.toFixed(1)+'</span>':''}${item.year?' · '+item.year:''}${item.newEp&&item.lastAirDate?' · <span style="color:var(--burg);font-size:.6rem;font-weight:700">Ep '+item.lastAirDate.slice(0,10)+'</span>':''}</div>
     </div>
   </div>`;
 }
@@ -1542,29 +1609,79 @@ async function loadHero() {
     </div>`;
 }
 
-async function loadNTW() {
-  const [np, at] = await Promise.all([
-    api('/movie/now_playing?page=1'),
-    api('/tv/on_the_air?page=1'),
-  ]);
-  const mv = (np.results||[]).slice(0,8).map((r,i) => toItem(r,i));
-  const tv = (at.results||[]).slice(0,6).map((r,i) => ({...toItem(r,i+8), isTv:true}));
-  const all = [...mv,...tv].sort(()=>Math.random()-.5).slice(0,12);
-  renderCar('ntwCar', all);
-  const el = document.getElementById('ntwCnt'); if(el) el.textContent = all.length+' titles';
+// TMDB genre IDs for TV
+// Movie sort state
+let movieSortMode = 'week';
+
+async function loadNTW(mode) {
+  mode = mode || movieSortMode;
+  carSkels('ntwCar', 10);
+  const today    = new Date().toISOString().slice(0,10);
+  const weekAgo  = new Date(Date.now()-7*86400000).toISOString().slice(0,10);
+  const monthAgo = new Date(Date.now()-30*86400000).toISOString().slice(0,10);
+  const yearAgo  = new Date(Date.now()-365*86400000).toISOString().slice(0,10);
+  let endpoint;
+  if      (mode==='week')   endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${weekAgo}&primary_release_date.lte=${today}&vote_count.gte=5`;
+  else if (mode==='month')  endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${monthAgo}&primary_release_date.lte=${today}&vote_count.gte=10`;
+  else if (mode==='year')   endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${yearAgo}&primary_release_date.lte=${today}&vote_count.gte=20`;
+  else                      endpoint = `/movie/popular?page=1`;
+  const d = await api(endpoint);
+  const items = (d.results||[]).slice(0,16).map((r,i) => toItem(r,i));
+  renderCar('ntwCar', items);
+  const el = document.getElementById('ntwCnt');
+  if(el) el.textContent = items.length + ' movies';
 }
 
-async function loadSerCar() {
+function sortMovies(mode, btn) {
+  movieSortMode = mode;
+  document.querySelectorAll('#movieSortBar .sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadNTW(mode);
+}
+
+// Series country state
+let seriesCountry = 'all';
+let seriesCache = {}; // cache results per country key
+
+async function loadSerCar(country) {
+  country = country || seriesCountry;
   carSkels('serCar', 10);
-  const [pop, air] = await Promise.all([
-    api('/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=1'),
-    api('/tv/on_the_air?page=1'),
-  ]);
-  const popular = (pop.results||[]).slice(0,8).map((r,i) => ({...toItem(r,i), isTv:true, flag:'📺'}));
-  const airing  = (air.results||[]).slice(0,6).map((r,i) => ({...toItem(r,i+8), isTv:true, flag:'🔴'}));
-  const all = [...airing, ...popular].filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i).slice(0,14);
-  renderCar('serCar', all);
-  const el = document.getElementById('serCnt'); if(el) el.textContent = all.length+' series';
+  let results;
+  if (seriesCache[country]) {
+    results = seriesCache[country];
+  } else {
+    let popular, airing;
+    if (country === 'all') {
+      const [pop, air] = await Promise.all([
+        api('/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=1'),
+        api('/tv/on_the_air?page=1'),
+      ]);
+      popular = (pop.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'📺'}));
+      airing  = (air.results||[]).map((r,i) => ({...toItem(r,i+8), isTv:true, flag:'🔴'}));
+    } else {
+      const [pop, air] = await Promise.all([
+        api(`/discover/tv?with_origin_country=${country}&sort_by=popularity.desc&vote_count.gte=10&page=1`),
+        api(`/discover/tv?with_origin_country=${country}&sort_by=first_air_date.desc&page=1`),
+      ]);
+      popular = (pop.results||[]).map((r,i) => ({...toItem(r,i), isTv:true}));
+      airing  = (air.results||[]).map((r,i) => ({...toItem(r,i+8), isTv:true}));
+    }
+    results = [...airing, ...popular]
+      .filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i)
+      .slice(0,16);
+    seriesCache[country] = results;
+  }
+  renderCar('serCar', results);
+  const newEpCount = results.filter(r => r.newEp).length;
+  const el = document.getElementById('serCnt');
+  if(el) el.textContent = results.length+' series'+(newEpCount>0?` · 🔴 ${newEpCount} new ep`:'');
+}
+
+function switchSerCountry(country, btn) {
+  seriesCountry = country;
+  document.querySelectorAll('.ser-gtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadSerCar(country);
 }
 
 /* ── FIX 2: loadNolCar() function declaration was missing — restored ── */
