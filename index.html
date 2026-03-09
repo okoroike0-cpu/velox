@@ -660,11 +660,8 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hero-title{font-size:clamp(1.4rem,5vw,2.2rem)}
   .hero-overview{display:none}
   .hero-acts{gap:8px}
-  /* Trend strip: compact horizontal scroll */
-  .trend-strip{padding:14px 16px 0}
-  .trend-strip .sb-title{font-size:.9rem}
-  .trend-strip .rank-number{font-size:80px;margin-right:-16px}
-  .trend-strip .rank-poster{width:80px;height:120px}
+  /* ★ HIDE trend strip at portrait tablet and below — not enough width */
+  .trend-strip{display:none !important}
   .mood-bar,.genre-bar{padding-left:16px;padding-right:16px;gap:6px}
   .mood-chip,.genre-chip{padding:7px 12px;font-size:.68rem}
   /* Detail page */
@@ -699,9 +696,8 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hero-title{font-size:clamp(1.2rem,5.5vw,1.8rem)}
   .hero-meta{font-size:.65rem;gap:6px;flex-wrap:wrap}
   .hero-acts .btn{padding:8px 12px;font-size:.68rem}
-  .trend-strip{padding:10px 12px 0}
-  .trend-strip .rank-number{font-size:60px;margin-right:-12px}
-  .trend-strip .rank-poster{width:64px;height:96px}
+  /* ★ HIDE trend strip on all mobile — too cramped, ruins the experience */
+  .trend-strip{display:none !important}
   .mood-label{display:none}
   .mood-bar{padding-top:16px}
   .mood-chip,.genre-chip{padding:6px 10px;font-size:.63rem}
