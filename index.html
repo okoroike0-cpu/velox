@@ -94,6 +94,7 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .trend-strip .rank-car { padding:8px 0 16px; }
 .trend-strip .rank-number { font-size:100px; margin-right:-20px; }
 .trend-strip .rank-poster { width:100px; height:150px; }
+.main-col { min-width:0; padding-right:32px; border-right:1px solid var(--bdr); }
 @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
 @keyframes shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -197,7 +198,6 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 
 /* LAYOUT */
 .main{display:grid;grid-template-columns:1fr 280px;max-width:1600px;margin:0 auto;padding:0 40px 80px;gap:0}
-.main-col{min-width:0;padding-right:32px;border-right:1px solid var(--bdr)}
 .sidebar{padding-left:24px}
 
 /* BROWSE PAGE */
@@ -601,7 +601,6 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .sidebar{display:none}
   .sidebar-sticky{position:relative;top:0}
   .grid{grid-template-columns:repeat(4,1fr)}
-  /* Trend strip becomes a side-floating panel next to content */
   .trend-strip{display:block}
   .hero-content{padding-left:48px}
   .det-backdrop{height:420px}
@@ -934,12 +933,6 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   </div>
 
   <main class="main">
-    <!-- FULL-WIDTH TRENDING STRIP (visible only on screens below 1300px) -->
-    <div class="trend-strip" id="trendStrip">
-      <div class="sb-title">🔥 Today's Top 10</div>
-      <p style="font-size:.64rem;color:var(--ink3);margin:-8px 0 8px;line-height:1.5">Swipe → · Updated daily</p>
-      <div class="rank-car" id="trendListWide"></div>
-    </div>
     <div class="main-col">
       <section class="sec">
         <div class="sec-hdr">
@@ -952,6 +945,13 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
           <div class="car-nav right" onclick="scrollCar('ntwCar',1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
         </div>
       </section>
+
+      <!-- 🔥 TRENDING STRIP — appears here (after first carousel, not on top) -->
+      <div class="trend-strip" id="trendStrip">
+        <div class="sb-title">🔥 Today's Top 10</div>
+        <p style="font-size:.64rem;color:var(--ink3);margin:-8px 0 8px;line-height:1.5">Swipe → · Updated daily</p>
+        <div class="rank-car" id="trendListWide"></div>
+      </div>
 
       <section class="sec" id="sec-series">
         <div class="sec-hdr">
