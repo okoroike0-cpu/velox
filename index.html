@@ -9,6 +9,9 @@
 <meta property="og:title" content="VELOX Cinema — Movies & Series">
 <meta property="og:description" content="Find where to watch any movie or series legally. Free streaming, trailers, ratings and more.">
 <meta property="og:type" content="website">
+<!-- VELOX favicon — SVG inline so no external file needed -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%239b1f30'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-weight='900' font-size='28' fill='%23f0ead8' letter-spacing='-1'%3EVX%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%239b1f30'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-weight='900' font-size='28' fill='%23f0ead8' letter-spacing='-1'%3EVX%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Barlow:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -106,9 +109,14 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .spinner{width:32px;height:32px;border:2px solid var(--bdr);border-top-color:var(--burg);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
 
 /* HEADER */
-.hdr{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--hh);display:flex;align-items:center;justify-content:space-between;padding:0 36px;background:rgba(13,10,7,.75);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid rgba(240,234,216,.06);transition:background .3s,border-color .3s}
-[data-theme="light"] .hdr{background:rgba(246,241,233,.75);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%)}
-.hdr.scrolled{background:rgba(13,10,7,.92);border-bottom-color:var(--burg3)}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--hh);display:flex;align-items:center;justify-content:space-between;padding:0 36px;
+  /* Always dark enough for status bar icons — not fully transparent */
+  background:rgba(13,10,7,.82);
+  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid rgba(240,234,216,.06);transition:background .3s,border-color .3s}
+[data-theme="light"] .hdr{background:rgba(246,241,233,.88);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%)}
+.hdr.scrolled{background:rgba(13,10,7,.96);border-bottom-color:var(--burg3)}
+[data-theme="light"] .hdr.scrolled{background:rgba(246,241,233,.98)}
 .logo{font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:900;letter-spacing:3px;cursor:pointer;user-select:none;transition:opacity .2s}
 .logo-v{color:var(--burg)}.logo-el{color:var(--gold);font-style:italic}.logo-ox{color:var(--ink)}
 .logo:hover{opacity:.75}
@@ -191,21 +199,42 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 
 /* HERO */
 .hero{position:relative;height:100vh;min-height:620px;display:flex;align-items:flex-end;padding-bottom:90px;overflow:hidden;margin-top:calc(-1 * var(--hh))}
-/* ★ FIX: Hero too tall on mobile — clamp to max 70vh so poster doesn't eat the whole screen */
+/* Hero image — center-top so faces/titles are always visible */
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 20%;animation:heroZoom 22s ease-in-out infinite alternate;opacity:0;transition:opacity .8s}
+/* Desktop gradient: dark left side so text is readable over bright backdrops */
+.hero-bg::after{content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(to right, rgba(13,10,7,.97) 30%, rgba(13,10,7,.55) 65%, rgba(13,10,7,.15) 100%),
+    linear-gradient(to top,   rgba(13,10,7,1)   0%, transparent 55%),
+    linear-gradient(to bottom,rgba(13,10,7,.7)  0%, transparent 30%);
+}
+[data-theme="light"] .hero-bg::after{background:
+  linear-gradient(to right,rgba(246,241,233,.98) 30%,rgba(246,241,233,.65) 65%,rgba(246,241,233,.2) 100%),
+  linear-gradient(to top,rgba(246,241,233,1) 0%,transparent 55%),
+  linear-gradient(to bottom,rgba(246,241,233,.8) 0%,transparent 30%)}
+
+/* Mobile: full-width so we need a strong vignette from all sides */
 @media(max-width:720px){
-  .hero{height:70vh;min-height:320px;padding-bottom:48px;align-items:flex-end}
+  .hero{height:70vh;min-height:320px;padding-bottom:48px}
+  /* Hero content sits at the bottom — header is transparent, image shows behind it */
+  .hero-content{padding-top:0;padding-left:20px;padding-right:20px;max-width:100%}
+  /* Stronger mobile gradient — covers top AND bottom so text always readable */
+  .hero-bg::after{background:
+    linear-gradient(to top,   rgba(13,10,7,1) 0%,  rgba(13,10,7,.6) 40%, transparent 70%),
+    linear-gradient(to bottom,rgba(13,10,7,.85) 0%, transparent 35%) !important}
+  [data-theme="light"] .hero-bg::after{background:
+    linear-gradient(to top,   rgba(246,241,233,1) 0%,rgba(246,241,233,.7) 40%,transparent 70%),
+    linear-gradient(to bottom,rgba(246,241,233,.9) 0%,transparent 35%) !important}
 }
 @media(max-width:540px){
-  .hero{height:60vh;min-height:280px;padding-bottom:36px}
+  .hero{height:62vh;min-height:280px;padding-bottom:36px}
+  .hero-content{padding-left:14px;padding-right:14px}
 }
 @media(max-width:360px){
-  .hero{height:55vh;min-height:240px;padding-bottom:28px}
+  .hero{height:56vh;min-height:240px;padding-bottom:28px}
 }
 .hero-bg{position:absolute;inset:0;z-index:0}
-.hero-bg img{width:100%;height:100%;object-fit:cover;animation:heroZoom 22s ease-in-out infinite alternate;opacity:0;transition:opacity .8s}
 .hero-bg img.loaded{opacity:1}
-.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(13,10,7,.97) 30%,rgba(13,10,7,.55) 65%,rgba(13,10,7,.15) 100%),linear-gradient(to top,rgba(13,10,7,1) 0%,transparent 50%)}
-[data-theme="light"] .hero-bg::after{background:linear-gradient(to right,rgba(246,241,233,.98) 30%,rgba(246,241,233,.65) 65%,rgba(246,241,233,.2) 100%),linear-gradient(to top,rgba(246,241,233,1) 0%,transparent 50%)}
 .hero-fallback{position:absolute;inset:0;background:radial-gradient(ellipse at 70% 40%,rgba(100,20,30,.3),transparent 60%),linear-gradient(135deg,#0d0a07,#1c0a0f 50%,#0d0a07);z-index:0}
 .hero-content{position:relative;z-index:2;padding-left:64px;max-width:620px;animation:fadeUp .9s ease both}
 .hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--burg);color:#fff;padding:5px 13px;border-radius:3px;font-size:.62rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:20px}
@@ -232,19 +261,7 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .btn-green:hover{background:rgba(74,158,107,.22)}
 
 /* FILTER BARS */
-.mood-bar{padding:28px 40px 0;max-width:1600px;margin:0 auto}
-.mood-label{font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
-.mood-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-.mood-scroll::-webkit-scrollbar{display:none}
-.mood-chip{flex-shrink:0;padding:6px 16px;border-radius:20px;font-size:.68rem;font-weight:700;border:1px solid var(--bdr);color:var(--ink3);cursor:pointer;transition:all .22s;white-space:nowrap}
-.mood-chip:hover{border-color:var(--burg);color:var(--ink)}
-.mood-chip.active{background:var(--burg);border-color:var(--burg);color:#fff}
-.genre-bar{padding:12px 40px 0;max-width:1600px;margin:0 auto}
-.genre-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
-.genre-scroll::-webkit-scrollbar{display:none}
-.g-chip{flex-shrink:0;padding:4px 13px;border-radius:20px;font-size:.66rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border:1px solid var(--bdr);color:var(--ink3);cursor:pointer;transition:all .2s}
-.g-chip:hover{border-color:var(--burg);color:var(--ink)}
-.g-chip.active{background:var(--burg);border-color:var(--burg);color:#fff}
+
 
 /* LAYOUT */
 .main{display:grid;grid-template-columns:1fr 280px;max-width:1600px;margin:0 auto;padding:0 40px 80px;gap:0}
@@ -257,8 +274,25 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .browse-hdr h1{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900}
 .browse-hdr h1 em{color:var(--burg);font-style:italic}
 .browse-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px}
-.browse-load-more{width:100%;padding:14px;margin-top:22px;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);font-size:.8rem;font-weight:700;color:var(--ink3);transition:all .2s;cursor:pointer}
-.browse-load-more:hover{border-color:var(--burg);color:var(--ink)}
+.browse-load-more{
+  display:block;
+  width:100%;
+  padding:16px;
+  margin-top:24px;
+  margin-bottom:16px;
+  background:var(--bg3);
+  border:1px solid var(--bdr);
+  border-radius:var(--r);
+  font-size:.82rem;
+  font-weight:700;
+  color:var(--ink2);
+  transition:all .2s;
+  cursor:pointer;
+  min-height:52px;
+  letter-spacing:.5px;
+}
+.browse-load-more:hover{border-color:var(--burg);color:var(--ink);background:var(--bg4)}
+.browse-load-more:disabled{opacity:.5;cursor:not-allowed}
 
 /* SECTION */
 .sec{padding-top:40px}
@@ -331,6 +365,11 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 
 /* NEW EPISODE BADGE */
 .new-ep-badge{position:absolute;top:7px;left:7px;background:var(--burg);color:#fff;font-size:.52rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 7px;border-radius:3px;z-index:5;animation:newEpPulse 2s ease-in-out infinite}
+/* Genre pill — bottom-left of card thumb, glassmorphism */
+.card-genre{position:absolute;bottom:7px;left:7px;background:rgba(13,10,7,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:var(--ink2);font-size:.5rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:2px 6px;border-radius:3px;z-index:3;border:1px solid rgba(240,234,216,.1);max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Episode tag — top-right, gold for new eps */
+.card-ep{position:absolute;top:7px;right:7px;background:var(--gold);color:#0d0a07;font-size:.5rem;font-weight:900;letter-spacing:.5px;padding:2px 6px;border-radius:3px;z-index:5}
+.card-ep.old{background:rgba(13,10,7,.72);backdrop-filter:blur(4px);color:var(--ink3);border:1px solid rgba(240,234,216,.1)}
 @keyframes newEpPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(1.05)}}
 .ep-air-today{background:var(--gold);color:#0d0a07}
 .ep-air-week{background:#25D366;color:#fff}
@@ -339,6 +378,8 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .browse-controls{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bdr)}
 .browse-controls .sort-bar{margin-bottom:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
 .browse-controls .sort-bar::-webkit-scrollbar{display:none}
+/* Active mood/genre filter badge */
+.browse-filter-badge{display:none}
 .browse-country-scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1}
 .browse-country-scroll::-webkit-scrollbar{display:none}
 .browse-country-scroll .sort-btn{flex-shrink:0}
@@ -351,12 +392,32 @@ body.data-saver .card-img { background:var(--bg4) !important; }
   .browse-controls .sort-btn{padding:5px 10px;font-size:.6rem;min-height:36px}
 }
 
-/* MOVIE SORT BAR */
-.sort-bar{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-.sort-label{font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-right:4px}
-.sort-btn{padding:6px 14px;border-radius:20px;font-size:.66rem;font-weight:700;letter-spacing:.5px;border:1px solid var(--bdr);color:var(--ink3);transition:all .2s;cursor:pointer;background:var(--bg3)}
+/* MOVIE SORT BAR — scrollable chip strip, fused with hero bottom */
+.sort-bar{display:flex;align-items:center;gap:0;margin-bottom:14px;position:relative}
+.sort-label{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);white-space:nowrap;padding-right:10px;flex-shrink:0}
+.sort-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0 6px;flex:1}
+.sort-chips::-webkit-scrollbar{display:none}
+.sort-btn{padding:6px 14px;border-radius:20px;font-size:.66rem;font-weight:700;letter-spacing:.3px;border:1.5px solid var(--bdr);color:var(--ink3);transition:all .2s;cursor:pointer;background:var(--bg3);white-space:nowrap;flex-shrink:0}
 .sort-btn:hover{border-color:var(--burg);color:var(--ink)}
-.sort-btn.active{background:var(--burg);border-color:var(--burg);color:#fff}
+.sort-btn.active{background:var(--burg);border-color:var(--burg);color:#fff;box-shadow:0 2px 12px rgba(155,31,48,.35)}
+/* Fused look — sort bar bleeds slightly into the hero's bottom gradient */
+#movieSortBar{
+  margin-top:-4px;
+  position:relative;
+  z-index:5;
+  padding-top:8px;
+}
+@media(max-width:720px){
+  .sort-bar{margin-bottom:10px}
+  .sort-label{display:none}
+  .sort-btn{padding:5px 12px;font-size:.62rem}
+  /* On mobile, sort chips sit flush under the hero with no gap */
+  #movieSortBar{margin-top:0;padding-top:6px}
+}
+@media(max-width:540px){
+  .sort-btn{padding:5px 11px;font-size:.6rem;border-width:1px}
+  .sort-btn.active{background:var(--burg);color:#fff}
+}
 
 /* SERIES GENRE TABS */
 .ser-genre-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:12px 0 4px;margin-bottom:-4px}
@@ -364,6 +425,14 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .ser-gtab{padding:5px 14px;border-radius:20px;font-size:.64rem;font-weight:700;letter-spacing:.5px;border:1px solid var(--bdr);color:var(--ink3);cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0;background:var(--bg3)}
 .ser-gtab:hover{border-color:var(--burg);color:var(--ink)}
 .ser-gtab.active{background:var(--burg);border-color:var(--burg);color:#fff}
+/* 🔴 Airing Now tab — always glows red whether active or not */
+.ser-gtab-live:not(.active){border-color:rgba(220,38,38,.5);color:#ef4444;background:rgba(220,38,38,.08)}
+.ser-gtab-live:not(.active):hover{border-color:#ef4444;background:rgba(220,38,38,.15)}
+.ser-gtab-live.active{background:#dc2626;border-color:#dc2626;animation:pulseRed 2s ease-in-out infinite}
+@keyframes pulseRed{
+  0%,100%{box-shadow:0 0 5px rgba(220,38,38,.2)}
+  50%    {box-shadow:0 0 18px rgba(220,38,38,.5)}
+}
 /* New episode dot on genre tab */
 .ser-gtab .ep-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin-left:5px;vertical-align:middle;animation:newEpPulse 2s infinite}
 .search-results-overlay{display:none;position:absolute;top:calc(var(--hh) + 6px);left:50%;transform:translateX(-50%);width:520px;max-width:90vw;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);box-shadow:var(--sh3);z-index:600;max-height:70vh;overflow-y:auto}
@@ -487,27 +556,64 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .next-ep-btn:hover{background:var(--burg2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(155,31,48,.4)}
 .next-ep-btn svg{width:12px;height:12px;fill:currentColor}
 
-.ep-list{display:flex;flex-direction:column;gap:7px}
-.ep-item{display:flex;gap:11px;padding:11px 13px;border-radius:7px;background:var(--bg3);border:1px solid var(--bdr);transition:all .22s;align-items:flex-start;position:relative}
-.ep-item:hover{border-color:rgba(155,31,48,.25);background:var(--bg4)}
-.ep-item.watched{border-color:rgba(74,158,107,.2)}
-.ep-item.downloading{border-color:var(--burg);background:var(--burg4);box-shadow:0 0 0 1px rgba(155,31,48,.15)}
-.ep-num{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ink3);width:30px;flex-shrink:0;line-height:1.2;padding-top:2px}
+/* ── VIDEO PLAYER — cinematic size on desktop, full-width on mobile ── */
+.video-wrap{
+  position:relative;
+  width:100%;
+  max-width:860px;
+  /* padding-top = min of: 16:9 ratio OR 55% of viewport height
+     On a 768px laptop: 55vh = 422px — player stays well within screen
+     On a 1080px monitor: 55vh = 594px — comfortable cinema size
+     The 56.25% cap prevents it going wider than 16:9 at any size       */
+  padding-top:min(56.25%, 65vh);
+  border-radius:10px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:0 16px 48px rgba(0,0,0,.6);
+  margin:0 auto 20px;
+}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+/* On mobile: edge-to-edge, ignore the 780px cap */
+@media(max-width:540px){
+  .video-wrap{
+    max-width:none;
+    border-radius:0;
+    margin-left:-14px;
+    margin-right:-14px;
+    width:calc(100% + 28px);
+    padding-top:56.25%;
+  }
+}
+
+/* ══════════════════════════════════════════
+   EPISODE LIST — single source of truth
+   ══════════════════════════════════════════ */
+.ep-list{display:flex;flex-direction:column;gap:6px}
+
+/* Desktop row: num | thumbnail | content */
+.ep-item{display:flex;flex-direction:row;gap:11px;padding:10px 13px;border-radius:8px;background:var(--bg3);border:1px solid var(--bdr);transition:border-color .2s,background .2s;align-items:center;position:relative}
+.ep-item:hover{border-color:rgba(155,31,48,.3);background:var(--bg4)}
+.ep-item.watched{border-color:rgba(74,158,107,.25);background:rgba(74,158,107,.04)}
+.ep-item.downloading{border-color:var(--burg);background:var(--burg4)}
+
+.ep-num{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ink3);width:28px;flex-shrink:0;text-align:center;line-height:1}
 .ep-item.watched .ep-num{color:var(--green)}
 .ep-item.downloading .ep-num{color:var(--burg)}
-.ep-still{width:105px;height:60px;border-radius:4px;overflow:hidden;flex-shrink:0;background:var(--bg4);position:relative}
+
+.ep-still{width:110px;height:62px;border-radius:5px;overflow:hidden;flex-shrink:0;background:var(--bg4);position:relative}
 .ep-still img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s}
 .ep-still img.loaded{opacity:1}
 .ep-dl-badge{position:absolute;inset:0;background:rgba(155,31,48,.75);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s}
 .ep-item.downloading .ep-dl-badge{opacity:1}
 .ep-dl-badge svg{width:18px;height:18px;fill:#fff}
+
 .ep-content{flex:1;min-width:0}
-.ep-name{font-size:.78rem;font-weight:700;line-height:1.3;margin-bottom:3px}
+.ep-name{font-size:.78rem;font-weight:700;line-height:1.3;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ep-item.downloading .ep-name{color:var(--burg)}
-.ep-meta{font-size:.63rem;color:var(--ink3);margin-bottom:4px;display:flex;gap:10px}
-.ep-overview{font-size:.7rem;line-height:1.6;color:var(--ink3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ep-acts{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;align-items:center}
-.ep-btn{padding:4px 10px;border-radius:4px;font-size:.6rem;font-weight:700;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:'Barlow',sans-serif;border:1px solid transparent}
+.ep-meta{font-size:.6rem;color:var(--ink3);margin-bottom:3px;display:flex;gap:8px;flex-wrap:wrap}
+.ep-overview{font-size:.68rem;line-height:1.55;color:var(--ink3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px}
+.ep-acts{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.ep-btn{padding:4px 10px;border-radius:4px;font-size:.58rem;font-weight:700;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:'Barlow',sans-serif;border:1px solid transparent;white-space:nowrap}
 .ep-btn.wt{background:transparent;color:var(--ink3);border-color:var(--bdr)}
 .ep-btn.wt:hover{border-color:var(--green);color:var(--green)}
 .ep-btn.wt.on{background:var(--green2);color:var(--green);border-color:rgba(74,158,107,.3)}
@@ -516,7 +622,71 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .ep-btn.dl.active-dl{background:var(--burg);color:#fff;border-color:var(--burg)}
 .ep-loading{text-align:center;padding:28px;color:var(--ink3);font-size:.82rem;display:flex;flex-direction:column;align-items:center;gap:10px}
 
-/* CAST */
+/* ── MOBILE EPISODE — Netflix left-thumb style ≤600px ──
+   ep-num hidden | thumbnail 90px fixed left | text right
+   Watch/Watched buttons stretch full row below text
+   Shows more episodes per screen than full-width card approach */
+@media(max-width:600px){
+  .ep-list{gap:8px}
+
+  .ep-item{
+    flex-direction:row;      /* keep horizontal — thumb left, text right */
+    flex-wrap:wrap;          /* let .ep-acts wrap to its own row */
+    padding:10px 10px 0;
+    gap:10px;
+    align-items:flex-start;
+    border-radius:10px;
+  }
+
+  /* Hide episode number — code shows in ep-meta */
+  .ep-num{display:none}
+
+  /* Thumbnail: fixed 90px wide, 16/9 height */
+  .ep-still{
+    width:90px;
+    height:51px;   /* 90 × 9/16 */
+    border-radius:6px;
+    flex-shrink:0;
+  }
+
+  /* Text column fills remaining width */
+  .ep-content{
+    flex:1;
+    min-width:0;
+    padding-bottom:4px;
+  }
+  .ep-name{
+    font-size:.75rem;
+    white-space:normal;       /* allow wrap — titles like "Yellow Fever" are short enough */
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    margin-bottom:3px;
+  }
+  .ep-meta{font-size:.58rem;gap:5px;margin-bottom:3px}
+  .ep-overview{display:none}  /* hide plot on tiny screens — saves space */
+
+  /* Action buttons: own full-width row below thumb+text */
+  .ep-acts{
+    flex-basis:100%;          /* push to new row */
+    flex-wrap:nowrap;
+    gap:6px;
+    padding:6px 0 10px;
+    margin-top:0;
+  }
+  .ep-btn{
+    flex:1;
+    justify-content:center;
+    text-align:center;
+    padding:9px 4px;
+    font-size:.62rem;
+    border-radius:7px;
+    min-height:38px;
+    display:flex;
+    align-items:center;
+  }
+}
 .cast-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
 .cast-scroll::-webkit-scrollbar{display:none}
 .cast-card{flex-shrink:0;width:80px;text-align:center}
@@ -636,8 +806,107 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .mob-drw-ov{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.65)}
 .mob-drw-ov.open{display:flex;justify-content:flex-end}
 .mob-panel{width:280px;height:100%;background:var(--bg2);padding:20px 18px 36px;display:flex;flex-direction:column;gap:2px;box-shadow:-4px 0 24px rgba(0,0,0,.3);position:relative;border-left:1px solid var(--bdr);overflow-y:auto}
-.mob-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer}
-/* Section labels inside drawer */
+/* Watchlist heart — always visible on touch devices (no hover on mobile) */
+@media(hover:none){
+  .card-wl{opacity:.85;background:rgba(13,10,7,.6)}
+  .card-wl.saved{opacity:1}
+}
+
+/* Season tabs — snap-to-tab on swipe */
+.seas-tabs{scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.seas-tab{scroll-snap-align:start}
+
+/* Cast scroll — fade right edge so user knows more exist */
+.cast-scroll{
+  mask-image:linear-gradient(to right,black 80%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to right,black 80%,transparent 100%);
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Schedule overlay blur — premium depth */
+.sched-ov.open{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+
+/* Hero title glow — subtle brand tint on dark backdrops */
+.hero-title{text-shadow:0 2px 24px rgba(155,31,48,.25),0 1px 3px rgba(0,0,0,.6)}
+
+/* Progress bar shimmer */
+.seas-prog-fill{position:relative;overflow:hidden}
+.seas-prog-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);animation:shimmer 2s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.sched-fab{
+  position:fixed;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 20px);
+  right:16px;
+  z-index:590;
+  background:#dc2626;
+  color:#fff;
+  border:none;
+  border-radius:28px;
+  padding:11px 16px;
+  display:none; /* shown only on mobile via media query below */
+  align-items:center;
+  gap:6px;
+  box-shadow:0 4px 20px rgba(220,38,38,.5);
+  animation:pulseRed 2.5s ease-in-out infinite;
+  cursor:pointer;
+  transition:transform .15s;
+}
+.sched-fab:active{transform:scale(.94)}
+.sched-fab-label{font-size:.64rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase}
+@media(max-width:720px){ .sched-fab{display:flex} }
+/* Hide FAB when detail or schedule panel is open */
+.sched-fab.hidden{display:none !important}
+
+/* ── LIVE SCHEDULE DRAWER ── */
+.sched-drawer{position:fixed;left:0;right:0;bottom:0;z-index:810;
+  background:var(--bg2);border-top:1px solid var(--bdr);
+  border-radius:20px 20px 0 0;
+  transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;max-height:92vh}
+.sched-drawer.open{transform:translateY(0)}
+/* Drag handle */
+.sched-handle{width:40px;height:4px;border-radius:2px;background:var(--bdr);margin:14px auto 0;flex-shrink:0}
+.sched-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;flex-shrink:0;border-bottom:1px solid var(--bdr)}
+.sched-hdr-left{display:flex;align-items:center;gap:10px}
+.sched-hdr-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900}
+.sched-live-dot{width:8px;height:8px;border-radius:50%;background:#dc2626;animation:pulseRed 2s infinite;flex-shrink:0}
+.sched-close{width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer;transition:background .2s}
+.sched-close:hover{background:var(--bg4)}
+/* Country filter row inside drawer */
+.sched-filters{display:flex;gap:6px;padding:10px 20px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid var(--bdr)}
+.sched-filters::-webkit-scrollbar{display:none}
+.sched-filter-btn{padding:5px 13px;border-radius:20px;font-size:.62rem;font-weight:700;border:1px solid var(--bdr);background:var(--bg3);color:var(--ink3);white-space:nowrap;flex-shrink:0;transition:all .18s;cursor:pointer}
+.sched-filter-btn.active{background:var(--burg);border-color:var(--burg);color:#fff}
+.sched-filter-btn.live-filter{border-color:rgba(220,38,38,.4);color:#ef4444;background:rgba(220,38,38,.07)}
+.sched-filter-btn.live-filter.active{background:#dc2626;border-color:#dc2626;color:#fff}
+/* Scrollable list */
+.sched-list{overflow-y:auto;flex:1;padding:8px 0 env(safe-area-inset-bottom,16px)}
+.sched-list::-webkit-scrollbar{width:3px}
+/* Each schedule row */
+.sched-item{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bdr2);cursor:pointer;transition:background .15s}
+.sched-item:hover,.sched-item:active{background:var(--bg3)}
+.sched-poster{width:46px;height:69px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--bg3)}
+.sched-poster-ph{width:46px;height:69px;border-radius:6px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.sched-info{flex:1;min-width:0}
+.sched-meta-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap}
+.sched-genre{font-size:.58rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:var(--burg3);color:var(--burg)}
+.sched-country{font-size:.7rem}
+.sched-title{font-size:.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.sched-ep{font-size:.68rem;color:var(--ink3)}
+.sched-time{flex-shrink:0;text-align:right}
+.sched-air-label{font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap}
+.sched-air-today{background:rgba(220,38,38,.15);color:#ef4444}
+.sched-air-tmrw{background:rgba(201,168,76,.12);color:var(--gold)}
+.sched-air-soon{background:var(--bg4);color:var(--ink3)}
+.sched-rating{font-size:.64rem;color:var(--gold);margin-top:3px}
+/* Loading/empty states */
+.sched-loading{padding:40px 20px;text-align:center;color:var(--ink3)}
+.sched-skel-item{display:flex;gap:12px;padding:10px 20px;border-bottom:1px solid var(--bdr2)}
+.sched-ov{position:fixed;inset:0;z-index:809;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .3s}
+.sched-ov.open{opacity:1;pointer-events:all}
+/* Overlay shared with watchlist panel */
+.panel-ov{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .3s}
+.panel-ov.open{opacity:1;pointer-events:all}
 .mob-section-label{font-size:.58rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);padding:4px 14px;margin-top:4px}
 /* ★ TAP TARGET FIX — minimum 44px hit area on all nav buttons */
 .mob-nb{min-height:44px;padding:0 14px;border-radius:6px;font-size:.82rem;font-weight:700;letter-spacing:.5px;color:var(--ink3);text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px;width:100%}
@@ -695,7 +964,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
 /* ── LAPTOP 1100px ── */
 @media(max-width:1100px){
   .foot-top{grid-template-columns:1fr 1fr}
-  .mood-bar,.genre-bar{padding-left:24px;padding-right:24px}
+  
   .main{padding:0 24px 70px}
   .browse-page{padding:0 24px 70px}
   .trend-strip{padding:20px 24px 0}
@@ -703,8 +972,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hero-sec{min-height:400px}
   .hero-content{padding-left:36px;max-width:520px}
   .det-title{font-size:2.6rem}
-  /* C-Drama hidden at laptop — accessible via nav dropdown */
-  #sec-cdrama{display:none}
+  /* C-Drama visible on all screens */
 }
 
 /* ── TABLET LANDSCAPE 960px: nav hides, search stays as bar, K-Drama hides ── */
@@ -713,13 +981,15 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hdr{padding:0 20px}
   .nav{display:none}
   .mob-menu{display:flex}
+  #profileBtn{width:36px}
+  #profileLabel{display:none}
   /* Search still a bar but smaller */
   .srch-wrap{width:180px}
   .hero-content{padding-left:28px;max-width:460px}
   .hero-sec{min-height:360px}
   .grid{grid-template-columns:repeat(3,1fr);gap:10px}
   .trend-strip{padding:16px 20px 0}
-  .mood-bar,.genre-bar{padding-left:20px;padding-right:20px;gap:8px}
+  
   .det-backdrop{height:360px}
   .det-top{gap:20px;margin-top:-60px}
   .det-poster{width:130px}
@@ -728,8 +998,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .btn{padding:9px 16px;font-size:.75rem}
   .foot-top{grid-template-columns:1fr 1fr}
   .card{flex:0 0 150px}
-  /* K-Drama & C-Drama hidden — in mobile nav dropdown */
-  #sec-kdrama,#sec-cdrama{display:none}
+  /* K-Drama & C-Drama visible on all screens */
 }
 
 /* ── TABLET PORTRAIT 720px: search becomes icon, Nollywood hides ── */
@@ -748,8 +1017,8 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hero-acts{gap:8px}
   /* ★ HIDE trend strip at portrait tablet and below — not enough width */
   .trend-strip{display:none !important}
-  .mood-bar,.genre-bar{padding-left:16px;padding-right:16px;gap:6px}
-  .mood-chip,.genre-chip{padding:7px 12px;font-size:.68rem}
+  
+  
   /* Detail page — tablet portrait 720px */
   .det-back{top:12px;left:12px;padding:7px 12px;font-size:.68rem}
   .det-backdrop{height:230px}
@@ -764,16 +1033,14 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .det-desc{font-size:.82rem;line-height:1.72;margin-bottom:14px}
   .det-acts{gap:7px;flex-wrap:wrap;margin-bottom:18px}
   .btn{padding:8px 14px;font-size:.72rem}
-  .ep-still{width:80px;height:45px}
+  /* Episode rows — handled by dedicated 600px block */
   .foot-top{grid-template-columns:1fr}
   .foot-col{display:none}
   .card{flex:0 0 140px}
   .sec-title{font-size:1rem}
   .main{padding:0 16px 60px}
   .browse-page{padding:0 16px 60px}
-  #sec-nollywood,#sec-kdrama,#sec-cdrama{display:none}
-  .genre-bar{display:none}
-}
+  /* All sections visible on all screens */
 
 /* ── MOBILE LARGE 540px: mood bar simplifies, genre gone ── */
 @media(max-width:540px){
@@ -790,9 +1057,9 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .hero-acts .btn{padding:8px 12px;font-size:.68rem}
   /* ★ HIDE trend strip on all mobile — too cramped, ruins the experience */
   .trend-strip{display:none !important}
-  .mood-label{display:none}
-  .mood-bar{padding-top:16px}
-  .mood-chip,.genre-chip{padding:6px 10px;font-size:.63rem}
+  
+  
+  
   .main{padding:0 12px 56px}
   .browse-page{padding:0 12px 56px}
   .sec-title{font-size:.92rem}
@@ -815,14 +1082,50 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   /* Buttons — full width stacked on mobile */
   .det-acts{flex-direction:column;gap:8px;margin-bottom:18px;align-items:stretch}
   .det-acts .btn,.det-acts a{width:100%;justify-content:center;min-height:46px;font-size:.78rem;border-radius:8px}
-  .ep-row{flex-direction:column;gap:6px}
-  .ep-still{width:100%;height:auto;aspect-ratio:16/9;border-radius:6px}
-  .ep-info{padding-left:0;padding-top:6px}
   .sim-grid{grid-template-columns:repeat(2,1fr);gap:8px}
   .dl-sec-title{font-size:.65rem}
   footer{padding:32px 20px 20px}
-  #sec-series,#sec-nollywood,#sec-kdrama,#sec-cdrama{display:none}
-  .mood-bar,.genre-bar{display:none}
+  /* Series section STAYS visible — most important for Nollywood/K-Drama fans on Android */
+  /* All sections visible — K-Drama/C-Drama covered by series country tabs too */
+  
+  /* Compact series country tabs */
+  .ser-gtab{padding:4px 10px;font-size:.58rem;letter-spacing:.3px}
+  .ser-genre-tabs{gap:4px;padding:8px 0 2px}
+  #sec-series .card{flex:0 0 128px}
+
+  /* ── DETAIL PAGE — 540px full mobile redesign ── */
+  .det-backdrop{height:200px}
+  .det-body{padding:0 14px 80px}
+  /* Poster left + title right, anchored to backdrop bottom */
+  .det-top{flex-direction:row;align-items:flex-end;gap:10px;margin-top:-48px;margin-bottom:14px;text-align:left}
+  .det-poster{width:88px;box-shadow:0 6px 20px rgba(0,0,0,.7)}
+  .det-info{flex:1;min-width:0;padding-bottom:0}
+  .det-title{font-size:1.15rem;line-height:1.15;margin-bottom:6px;text-align:left;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .det-meta{font-size:.58rem;gap:3px;margin-bottom:7px;justify-content:flex-start;flex-wrap:wrap}
+  .det-badge{padding:2px 6px;font-size:.55rem}
+  .det-genres{display:none}
+  .det-rating{font-size:.72rem}
+  .det-desc{font-size:.8rem;line-height:1.68;margin-bottom:14px}
+  /* Buttons — full width, stacked, easy to tap */
+  .det-acts{flex-direction:column;gap:8px;margin-bottom:20px;align-items:stretch}
+  .det-acts .btn,.det-acts a.btn{width:100%;justify-content:center;min-height:48px;font-size:.8rem;border-radius:10px;padding:12px 16px}
+  /* Provider pills — horizontal scroll */
+  .prov-row{display:flex !important;flex-wrap:nowrap !important;overflow-x:auto;gap:8px;padding-bottom:6px;scrollbar-width:none}
+  .prov-row::-webkit-scrollbar{display:none}
+  .prov-chip{flex-shrink:0}
+  /* Season tabs — horizontal scroll */
+  .seas-tabs{gap:6px;padding-bottom:8px}
+  .seas-tab{padding:5px 12px;font-size:.64rem}
+  /* Episode rows — handled by dedicated 600px block */
+  /* Cast */
+  .cast-row{gap:10px}
+  .cast-card{width:64px}
+  .cast-av{width:52px;height:52px;font-size:1.1rem}
+  .cast-name{font-size:.52rem}
+  /* Similar grid */
+  .sim-grid{grid-template-columns:repeat(3,1fr);gap:7px}
+  .dl-sec-title{font-size:.65rem}
+  footer{padding:28px 16px 16px}
 }
 
 /* ── MOBILE SMALL 420px ── */
@@ -848,7 +1151,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .srch-icon-btn{min-width:44px;min-height:44px}
   .card-wl{width:36px;height:36px}
   .view-all{min-height:36px;display:inline-flex;align-items:center}
-  .mood-chip,.genre-chip{min-height:36px;display:inline-flex;align-items:center}
+  
   .card-rb{padding:5px 9px}
   .sort-btn{min-height:36px;padding:0 12px}
   .mob-nb{min-height:44px}
@@ -906,14 +1209,20 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
 <!-- USERNAME OVERLAY -->
 <div class="overlay" id="uOverlay">
   <div class="umodal">
-    <h2>JOIN <em>VELOX</em></h2>
-    <p>Pick a username to leave comments, track episodes and build your watchlist.</p>
-    <input class="u-input" id="uField" maxlength="22" placeholder="Your username…" autocomplete="off">
-    <button class="btn btn-prim" style="width:100%;justify-content:center" onclick="saveUser()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Let's Go
-    </button>
-    <p style="font-size:.66rem;color:var(--ink3);margin-top:12px">Stored locally — no account needed.</p>
+    <div id="uModalMain">
+      <h2 id="uModalTitle">👤 <em>My Profile</em></h2>
+      <input class="u-input" id="uField" maxlength="22" placeholder="Your username…" autocomplete="off" style="margin-bottom:10px">
+      <button class="btn btn-prim" style="width:100%;justify-content:center" onclick="saveUser()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Save Username
+      </button>
+      <div style="border-top:1px solid var(--bdr);margin:16px 0 12px"></div>
+      <div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;text-align:left;font-size:.7rem;color:var(--ink3);margin-bottom:12px;line-height:1.6">
+        ✅ Your watchlist syncs across all your devices. Log in with the same username on any phone or laptop to get everything back.
+      </div>
+      <button class="btn" style="width:100%;justify-content:center;font-size:.68rem;color:var(--ink3)" onclick="document.getElementById('uOverlay').classList.remove('open')">✕ Close</button>
+      <p style="font-size:.62rem;color:var(--ink3);margin-top:10px">No password needed — just a username.</p>
+    </div>
   </div>
 </div>
 
@@ -948,6 +1257,10 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
     <div class="icon-btn" onclick="openWL()" id="wlBtn" title="My Watchlist">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
       <span class="wl-dot" id="wlDot">0</span>
+    </div>
+    <div class="icon-btn" onclick="changeUser()" id="profileBtn" title="My Profile" style="font-size:.72rem;font-weight:700;gap:5px;width:auto;padding:0 10px;border-radius:20px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span id="profileLabel" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
     </div>
     <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">
       <div class="theme-knob">
@@ -992,14 +1305,6 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
     <button class="mob-nb" onclick="browseTo('cdrama');closeMob()">🇨🇳 C-Drama</button>
     <button class="mob-nb" onclick="browseTo('trailers');closeMob()">🎞️ Trailers</button>
 
-    <!-- MOODS -->
-    <div class="mob-section-label" style="margin-top:12px">Moods</div>
-    <button class="mob-nb" onclick="applyMood('action');closeMob()">⚡ Action</button>
-    <button class="mob-nb" onclick="applyMood('romance');closeMob()">💕 Romance</button>
-    <button class="mob-nb" onclick="applyMood('scary');closeMob()">😱 Horror</button>
-    <button class="mob-nb" onclick="applyMood('mindbend');closeMob()">🌀 Mind-Bending</button>
-    <button class="mob-nb" onclick="applyMood('comedy');closeMob()">😂 Comedy</button>
-
     <!-- MY STUFF -->
     <div class="mob-section-label" style="margin-top:12px">My VELOX</div>
     <button class="mob-nb" onclick="openWL();closeMob()">📚 My Watchlist</button>
@@ -1020,6 +1325,38 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
          class="mob-nb" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#25D366">
         💬 WhatsApp Channel
       </a>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE SCHEDULE DRAWER -->
+<div class="sched-ov" id="schedOv" onclick="closeSched()"></div>
+<div class="sched-drawer" id="schedDrawer">
+  <div class="sched-handle"></div>
+  <div class="sched-hdr">
+    <div class="sched-hdr-left">
+      <div class="sched-live-dot"></div>
+      <span class="sched-hdr-title">Live Broadcast Schedule</span>
+    </div>
+    <button class="sched-close" onclick="closeSched()">✕</button>
+  </div>
+  <div class="sched-filters" id="schedFilters">
+    <button class="sched-filter-btn live-filter active" onclick="filterSched('airing',this)">🔴 Today</button>
+    <button class="sched-filter-btn live-filter" onclick="filterSched('week',this)">📅 This Week</button>
+    <button class="sched-filter-btn" onclick="filterSched('all',this)">🌍 All</button>
+    <button class="sched-filter-btn" onclick="filterSched('KR',this)">🇰🇷 K-Drama</button>
+    <button class="sched-filter-btn" onclick="filterSched('NG',this)">🇳🇬 Nollywood</button>
+    <button class="sched-filter-btn" onclick="filterSched('CN',this)">🇨🇳 C-Drama</button>
+    <button class="sched-filter-btn" onclick="filterSched('JP',this)">🇯🇵 Japan</button>
+    <button class="sched-filter-btn" onclick="filterSched('US',this)">🇺🇸 USA</button>
+    <button class="sched-filter-btn" onclick="filterSched('GB',this)">🇬🇧 UK</button>
+    <button class="sched-filter-btn" onclick="filterSched('IN',this)">🇮🇳 India</button>
+    <button class="sched-filter-btn" onclick="filterSched('TR',this)">🇹🇷 Turkey</button>
+  </div>
+  <div class="sched-list" id="schedList">
+    <div class="sched-loading">
+      <div class="spinner" style="margin-bottom:12px"></div>
+      <div>Loading schedule…</div>
     </div>
   </div>
 </div>
@@ -1051,13 +1388,6 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
     </div>
   </section>
 
-  <div class="mood-bar">
-    <div class="mood-label">🎭 I'm in the mood for…</div>
-    <div class="mood-scroll" id="moodScroll"></div>
-  </div>
-  <div class="genre-bar">
-    <div class="genre-scroll" id="genreScroll"></div>
-  </div>
 
   <main class="main">
     <div class="main-col">
@@ -1066,13 +1396,20 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
           <div class="sec-title">🎬 Movies <span class="sec-cnt" id="ntwCnt"></span></div>
           <button class="view-all" onclick="browseTo('hollywood')">View All →</button>
         </div>
-        <!-- Sort by time period -->
+        <!-- Sort by time period — specific years -->
         <div class="sort-bar" id="movieSortBar">
-          <span class="sort-label">Sort:</span>
-          <button class="sort-btn active" onclick="sortMovies('week',this)">This Week</button>
-          <button class="sort-btn" onclick="sortMovies('month',this)">This Month</button>
-          <button class="sort-btn" onclick="sortMovies('year',this)">This Year</button>
-          <button class="sort-btn" onclick="sortMovies('alltime',this)">All Time</button>
+          <span class="sort-label">Filter:</span>
+          <div class="sort-chips">
+            <button class="sort-btn" onclick="sortMovies('week',this)">🗓 This Week</button>
+            <button class="sort-btn" onclick="sortMovies('month',this)">📅 This Month</button>
+            <button class="sort-btn" onclick="sortMovies('2025',this)">2025</button>
+            <button class="sort-btn" onclick="sortMovies('2024',this)">2024</button>
+            <button class="sort-btn" onclick="sortMovies('2023',this)">2023</button>
+            <button class="sort-btn" onclick="sortMovies('2020-2022',this)">2020–22</button>
+            <button class="sort-btn" onclick="sortMovies('2010-2019',this)">2010–19</button>
+            <button class="sort-btn" onclick="sortMovies('2000-2009',this)">2000–09</button>
+            <button class="sort-btn active" onclick="sortMovies('alltime',this)">⭐ All Time</button>
+          </div>
         </div>
         <div class="car-wrap">
           <div class="car-nav" onclick="scrollCar('ntwCar',-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
@@ -1088,14 +1425,31 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         <div class="rank-car" id="trendListWide"></div>
       </div>
 
+      <!-- 📅 AIRING THIS WEEK — new episodes dropping now -->
+      <section class="sec" id="sec-airing-week" style="display:none">
+        <div class="sec-hdr">
+          <div class="sec-title">📅 Airing This Week <span class="sec-cnt" id="airingCnt"></span></div>
+          <button class="view-all" style="color:#ef4444;border-color:rgba(220,38,38,.3)" onclick="openSched()">📡 Full Schedule</button>
+        </div>
+        <div class="car-wrap">
+          <div class="car-nav" onclick="scrollCar('airingCar',-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+          <div class="car" id="airingCar"></div>
+          <div class="car-nav right" onclick="scrollCar('airingCar',1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </section>
+
       <section class="sec" id="sec-series">
         <div class="sec-hdr">
           <div class="sec-title">📺 Series <span class="sec-cnt" id="serCnt"></span></div>
-          <button class="view-all" onclick="browseTo('series')">View All →</button>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="view-all" style="color:#ef4444;border-color:rgba(220,38,38,.3)" onclick="openSched()">📡 Schedule</button>
+            <button class="view-all" onclick="browseTo('series')">View All →</button>
+          </div>
         </div>
         <!-- Country tabs for series -->
         <div class="ser-genre-tabs" id="serGenreTabs">
-          <div class="ser-gtab active" onclick="switchSerCountry('all',this)">🌍 All <span class="ep-dot"></span></div>
+          <div class="ser-gtab ser-gtab-live active" onclick="switchSerCountry('all',this)">🌍 All <span class="ep-dot"></span></div>
+          <div class="ser-gtab ser-gtab-live" onclick="switchSerCountry('airing',this)">🔴 Airing Now</div>
           <div class="ser-gtab" onclick="switchSerCountry('US',this)">🇺🇸 USA</div>
           <div class="ser-gtab" onclick="switchSerCountry('GB',this)">🇬🇧 UK</div>
           <div class="ser-gtab" onclick="switchSerCountry('NG',this)">🇳🇬 Nigeria</div>
@@ -1230,6 +1584,11 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
 
 <!-- TOAST -->
 <div class="toast" id="toastEl">
+<!-- Floating 📡 button — mobile only, always visible above home bar -->
+<button class="sched-fab" id="schedFab" onclick="openSched()" title="Live Schedule">
+  <span style="font-size:1.1rem">📡</span>
+  <span class="sched-fab-label">Schedule</span>
+</button>
   <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><polyline points="20 6 9 12 4 10"/></svg>
   <span id="toastTxt"></span>
 </div>
@@ -1264,16 +1623,6 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
         </ul>
       </div>
       <div class="foot-col">
-        <h4>Discover</h4>
-        <ul>
-          <li><a onclick="applyMood('action')">⚡ Action</a></li>
-          <li><a onclick="applyMood('romance')">💕 Romance</a></li>
-          <li><a onclick="applyMood('scary')">😱 Horror</a></li>
-          <li><a onclick="applyMood('mindbend')">🌀 Mind-Bending</a></li>
-          <li><a onclick="applyMood('comedy')">😂 Comedy</a></li>
-        </ul>
-      </div>
-      <div class="foot-col">
         <h4>VELOX</h4>
         <ul>
           <li><a href="https://t.me/VELOXDOWNLOAD" target="_blank" rel="noopener">✈️ Telegram Channel</a></li>
@@ -1305,7 +1654,8 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
 ═══════════════════════════════ */
 
 /* ── FIX 1: Use Bearer token instead of api_key param ── */
-const WORKER = 'https://velox-tmdb-proxy.ikoromichael592.workers.dev';
+const WORKER   = 'https://velox-worker.ikoromichael592.workers.dev';
+const API_BASE = 'https://velox-worker.ikoromichael592.workers.dev';
 const IMG  = "https://image.tmdb.org/t/p/w342";
 const ORIG = "https://image.tmdb.org/t/p/w500";
 const BG   = "https://image.tmdb.org/t/p/w1280";
@@ -1314,20 +1664,23 @@ const GRADS = ["#1a0a2e","#0a1628","#1a0000","#0a2818","#1a1a0a","#200a1a"];
 const AV_COLORS = ["#9b1f30","#2563eb","#16a34a","#b45309","#7c3aed","#0891b2","#be185d","#9a3412"];
 
 /* ── STATE ── */
-let currentUser = localStorage.getItem('vx-user') || '';
-let watchlist   = JSON.parse(localStorage.getItem('vx-wl') || '[]');
-let history_    = JSON.parse(localStorage.getItem('vx-hist') || '[]');
-let epProgress  = JSON.parse(localStorage.getItem('vx-ep') || '{}');
-let activeMood  = null;
-let activeGenre = 0;
+let currentUser = '';
+let userToken   = localStorage.getItem('vx-token') || '';
+let userId      = null;
+let watchlist   = [];
+let history_    = [];
+let epProgress  = {};
+
+
 let curDetailItem = null;
 let cmtSort     = 'newest';
 let spoilerMode = false;
 let srchTimer   = null;
 let toastTimer  = null;
 let currentView = 'home';
-let browseType  = 'hollywood';
-let browsePages = { hollywood:1, series:1, nollywood:1, kdrama:1, cdrama:1, trailers:1 };
+let browseType   = 'hollywood';
+
+let browsePages  = { hollywood:1, series:1, nollywood:1, kdrama:1, cdrama:1, trailers:1 };
 let ftabPages   = { hollywood:1, series:1, nollywood:1, kdrama:1, cdrama:1, trailers:1 };
 let activeFTab  = 'hollywood';
 
@@ -1407,6 +1760,13 @@ function toItem(r, i=0) {
     rating: r.vote_average || 0,
     grade: GRADS[i % GRADS.length],
     lastAirDate: lastAir,
+    nextAirDate: r.next_episode_to_air?.air_date || null,
+    nextEp: r.next_episode_to_air
+      ? `S${r.next_episode_to_air.season_number} E${r.next_episode_to_air.episode_number}`
+      : null,
+    lastEp: r.last_episode_to_air
+      ? `S${r.last_episode_to_air.season_number} E${r.last_episode_to_air.episode_number}`
+      : null,
     newEpToday, newEpWeek, newEp,
     genreIds: r.genre_ids || [],
   };
@@ -1440,20 +1800,61 @@ function gcrdRating(rating) {
 }
 
 /* ── CARD HTML ── */
+// Shared genre lookup — TV + Movie IDs
+const GENRE_MAP = {
+  28:'Action',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',
+  99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',
+  27:'Horror',10402:'Music',9648:'Mystery',10749:'Romance',878:'Sci-Fi',
+  10770:'TV Movie',53:'Thriller',10752:'War',37:'Western',
+  10759:'Action-Adv',10762:'Kids',10765:'Sci-Fi & Fantasy',
+  10766:'Soap',10767:'Talk',10768:'War & Politics'
+};
+function getGenreLabel(ids) {
+  for (const id of (ids||[])) { if (GENRE_MAP[id]) return GENRE_MAP[id]; }
+  return '';
+}
+
 function cardHtml(item) {
   const saved = isInWL(item.id);
-  // New episode badge — only on TV series
+  // New episode badge — top-left, only on TV series
+  // Show actual episode number e.g "🔴 S2 E5 · Today"
   let epBadge = '';
-  if (item.newEpToday) epBadge = `<div class="new-ep-badge ep-air-today">🔴 NEW TODAY</div>`;
-  else if (item.newEpWeek) epBadge = `<div class="new-ep-badge ep-air-week">✅ NEW THIS WEEK</div>`;
-  else if (item.newEp)    epBadge = `<div class="new-ep-badge">🆕 NEW EPISODE</div>`;
+  const epNum = item.lastEp || item.nextEp || '';
+  if (item.newEpToday) epBadge = `<div class="new-ep-badge ep-air-today">🔴 ${epNum ? epNum+' · ' : ''}Out Today</div>`;
+  else if (item.newEpWeek) epBadge = `<div class="new-ep-badge ep-air-week">✅ ${epNum ? epNum+' · ' : ''}This Week</div>`;
+  else if (item.newEp)    epBadge = `<div class="new-ep-badge">🆕 ${epNum ? epNum+' · ' : ''}New Ep</div>`;
+
+  // Upcoming episode tag — top-right corner
+  const upcomingEp = item.nextEp && !item.newEpToday && !item.newEpWeek
+    ? `<div class="card-ep">${item.nextEp} upcoming</div>`
+    : '';
+
+  // Genre pill
+  const genre = getGenreLabel(item.genreIds);
+  const genrePill = genre && !item.flag
+    ? `<div class="card-genre">${genre}</div>`
+    : '';
+
+  // Sub line: airLabel (schedule) OR rating + episode info
+  let subLine = '';
+  if (item.airLabel) {
+    // Show airing time + next episode if known
+    subLine = `<span style="color:#ef4444;font-weight:700;font-size:.6rem">${item.airLabel}${item.nextEp ? ' · '+item.nextEp : ''}</span>`;
+  } else {
+    const ratingStr = item.rating > 0 ? `<span style="color:var(--gold);font-weight:700">★ ${item.rating.toFixed(1)}</span>` : '';
+    const epStr = epNum ? `<span style="color:var(--burg);font-size:.6rem;font-weight:700">${epNum}</span>` : '';
+    const yearStr = item.year ? item.year : '';
+    subLine = [ratingStr, yearStr, epStr].filter(Boolean).join(' · ');
+  }
+
   return `
   <div class="card" onclick="openDetailGated(${item.id},${!!item.isTv})">
     <div class="card-thumb">
       ${posterImg(item)}
       ${epBadge}
+      ${upcomingEp}
       ${!epBadge ? starBadge(item.rating) : `<div class="card-rb" style="top:${item.newEp?'32px':'7px'}"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>${item.rating.toFixed(1)}</div>`}
-      ${item.flag ? `<div class="card-flag">${item.flag}</div>` : ''}
+      ${item.flag ? `<div class="card-flag">${item.flag}</div>` : genrePill}
       <button class="card-wl${saved?' saved':''}" data-id="${item.id}" onclick="event.stopPropagation();tglWL(${item.id})" title="Watchlist">
         <svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
@@ -1466,7 +1867,7 @@ function cardHtml(item) {
     </div>
     <div class="card-info">
       <div class="card-name">${esc(item.title)}</div>
-      <div class="card-sub">${item.rating>0?'<span style="color:var(--gold);font-weight:700">★ '+item.rating.toFixed(1)+'</span>':''}${item.year?' · '+item.year:''}${item.newEp&&item.lastAirDate?' · <span style="color:var(--burg);font-size:.6rem;font-weight:700">Ep '+item.lastAirDate.slice(0,10)+'</span>':''}</div>
+      <div class="card-sub">${subLine}</div>
     </div>
   </div>`;
 }
@@ -1492,8 +1893,12 @@ function renderCar(id, items) {
 }
 function renderGrid(id, items, append=false) {
   const el = document.getElementById(id); if (!el) return;
-  if (!append) el.innerHTML = '';
-  el.innerHTML += items.map(i => gcrdHtml(i)).join('');
+  if (!append) {
+    el.innerHTML = '';
+  }
+  // insertAdjacentHTML avoids destroying existing DOM nodes on append
+  // innerHTML += re-parses entire grid which causes image reloads & scroll jumps on mobile
+  el.insertAdjacentHTML('beforeend', items.map(i => gcrdHtml(i)).join(''));
 }
 function carSkels(id, n=8) {
   const el = document.getElementById(id); if (!el) return;
@@ -1508,48 +1913,6 @@ function gridSkels(id, n=12) {
   ).join('');
 }
 
-/* ── MOODS ── */
-const MOODS = [
-  { id:'action',    label:'⚡ Action',       genres:'28,12',    sort:'popularity.desc' },
-  { id:'romance',   label:'💕 Romance',      genres:'10749,18', sort:'popularity.desc' },
-  { id:'scary',     label:'😱 Horror',       genres:'27,9648',  sort:'popularity.desc' },
-  { id:'mindbend',  label:'🌀 Mind-Bending', genres:'878,9648', sort:'vote_average.desc' },
-  { id:'comedy',    label:'😂 Comedy',       genres:'35',       sort:'popularity.desc' },
-  { id:'epic',      label:'🏛 Epic',          genres:'10752,36', sort:'vote_average.desc' },
-  { id:'nollywood', label:'🎬 Nollywood',    special:'nollywood' },
-  { id:'kdrama',    label:'🇰🇷 K-Drama',      special:'kdrama' },
-  { id:'cdrama',    label:'🇨🇳 C-Drama',      special:'cdrama' },
-];
-const GENRES_M = [
-  {id:0,n:'All'},{id:28,n:'Action'},{id:12,n:'Adventure'},{id:16,n:'Animation'},
-  {id:35,n:'Comedy'},{id:80,n:'Crime'},{id:18,n:'Drama'},{id:10751,n:'Family'},
-  {id:14,n:'Fantasy'},{id:27,n:'Horror'},{id:9648,n:'Mystery'},{id:10749,n:'Romance'},
-  {id:878,n:'Sci-Fi'},{id:53,n:'Thriller'},{id:10752,n:'War'},
-];
-
-function renderMoods() {
-  document.getElementById('moodScroll').innerHTML = MOODS.map(m =>
-    `<button class="mood-chip${activeMood===m.id?' active':''}" onclick="applyMood('${m.id}')">${m.label}</button>`
-  ).join('');
-}
-function renderGenres() {
-  document.getElementById('genreScroll').innerHTML = GENRES_M.map(g =>
-    `<button class="g-chip${activeGenre===g.id?' active':''}" onclick="selectGenre(${g.id})">${g.n}</button>`
-  ).join('');
-}
-async function applyMood(id) {
-  if (activeMood === id) { activeMood = null; activeGenre = 0; renderMoods(); renderGenres(); goHome(); return; }
-  activeMood = id; activeGenre = 0; renderMoods(); renderGenres();
-  const m = MOODS.find(x => x.id === id);
-  if (!m) return;
-  if (m.special) { browseTo(m.special); return; }
-  browseTo('hollywood', `mood:${m.genres}:${m.sort}`);
-}
-async function selectGenre(id) {
-  activeGenre = id; activeMood = null; renderMoods(); renderGenres();
-  if (id === 0) { browseTo('hollywood'); return; }
-  browseTo('hollywood', `genre:${id}`);
-}
 
 /* ── BROWSE PAGE ── */
 const BROWSE_LABELS = {
@@ -1561,8 +1924,9 @@ const BROWSE_LABELS = {
   trailers:  '🎞 Upcoming Trailers',
 };
 
-async function browseTo(type, filter='') {
+async function browseTo(type) {
   browseType = type;
+  
   browsePages[type] = 1;
   currentView = 'browse';
   document.getElementById('pgHome').style.display = 'none';
@@ -1575,24 +1939,27 @@ async function browseTo(type, filter='') {
 
   const label = BROWSE_LABELS[type] || type;
   const inner = document.getElementById('browseInner');
-
-  // ── Build the right controls for this section ──
   let controlsHtml = '';
 
-  if (type === 'hollywood' || type === 'nollywood' || type === 'kdrama' || type === 'cdrama' || type === 'trailers') {
-    // Movie sort bar — pre-select whatever is currently active
-    const modes = [['week','This Week'],['month','This Month'],['year','This Year'],['alltime','All Time']];
+  if (type === 'hollywood' || type === 'nollywood' || type === 'kdrama' || type === 'cdrama') {
+    const modes = [
+      ['week','🗓 This Week'],['month','📅 This Month'],
+      ['2025','2025'],['2024','2024'],['2023','2023'],
+      ['2020-2022','2020–22'],['2010-2019','2010–19'],['2000-2009','2000–09'],
+      ['alltime','⭐ All Time']
+    ];
     controlsHtml = `
       <div class="browse-controls">
         <div class="sort-bar" id="browseSortBar">
-          <span class="sort-label">Sort by:</span>
-          ${modes.map(([m,l]) => `<button class="sort-btn${movieSortMode===m?' active':''}" onclick="setBrowseSort('${m}',this,'${type}')">${l}</button>`).join('')}
+          <span class="sort-label">Filter:</span>
+          <div class="sort-chips">
+            ${modes.map(([m,l]) => `<button class="sort-btn${movieSortMode===m?' active':''}" onclick="setBrowseSort('${m}',this,'${type}')">${l}</button>`).join('')}
+          </div>
         </div>
       </div>`;
   }
 
   if (type === 'series') {
-    // Country filter bar — pre-select whatever is currently active
     const countries = [
       ['all','🌍 All'],['US','🇺🇸 USA'],['GB','🇬🇧 UK'],
       ['NG','🇳🇬 Nigeria'],['KR','🇰🇷 K-Drama'],['CN','🇨🇳 C-Drama'],
@@ -1622,27 +1989,41 @@ async function browseTo(type, filter='') {
   const items = await fetchBrowse(type, 1);
   renderGrid('browseGrid', items);
   const btn = document.getElementById('browseMore');
-  if (btn && items.length < 15) btn.style.display = 'none';
+  if (btn) btn.style.display = items.length === 0 ? 'none' : 'block';
 }
 
 async function loadBrowseMore(type) {
   browsePages[type]++;
   const btn = document.getElementById('browseMore');
-  if (btn) btn.textContent = 'Loading…';
+  if (btn) { btn.textContent = 'Loading…'; btn.disabled = true; }
   const items = await fetchBrowse(type, browsePages[type]);
   renderGrid('browseGrid', items, true);
-  if (btn) { btn.textContent = 'Load More'; if (items.length < 5) btn.disabled = true; }
+  if (btn) {
+    btn.disabled = false;
+    if (items.length === 0) {
+      btn.textContent = 'No more results';
+      btn.disabled = true;
+    } else {
+      btn.textContent = 'Load More';
+    }
+  }
 }
 
 function setBrowseSort(mode, btn, type) {
   movieSortMode = mode;
+  
   document.querySelectorAll('#browseSortBar .sort-btn').forEach(b => b.classList.remove('active'));
-  // also sync home sort bar if visible
   document.querySelectorAll('#movieSortBar .sort-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   browsePages[type] = 1;
+  // Reset Load More button
+  const moreBtn = document.getElementById('browseMore');
+  if (moreBtn) { moreBtn.textContent = 'Load More'; moreBtn.disabled = false; moreBtn.style.display = 'block'; }
   gridSkels('browseGrid', 20);
-  fetchBrowse(type, 1).then(items => renderGrid('browseGrid', items));
+  fetchBrowse(type, 1).then(items => {
+    renderGrid('browseGrid', items);
+    if (moreBtn) moreBtn.style.display = items.length === 0 ? 'none' : 'block';
+  });
 }
 
 function setBrowseCountry(country, btn) {
@@ -1659,47 +2040,72 @@ function setBrowseCountry(country, btn) {
 
 /* ── UNIFIED BROWSE FETCHER — respects sort mode and country filter ── */
 async function fetchBrowse(type, page=1) {
-  const today    = new Date().toISOString().slice(0,10);
-  const weekAgo  = new Date(Date.now()-7*86400000).toISOString().slice(0,10);
-  const monthAgo = new Date(Date.now()-30*86400000).toISOString().slice(0,10);
-  const yearAgo  = new Date(Date.now()-365*86400000).toISOString().slice(0,10);
+  // Build date filter params if a time-based sort is active
+  const range = getMovieDateRange(movieSortMode);
+  const dateParams = range
+    ? `&primary_release_date.gte=${range.gte}&primary_release_date.lte=${range.lte}&first_air_date.gte=${range.gte}&first_air_date.lte=${range.lte}&vote_count.gte=${range.minVotes}`
+    : '';
+  const movieDateParams = range
+    ? `&primary_release_date.gte=${range.gte}&primary_release_date.lte=${range.lte}&vote_count.gte=${range.minVotes}`
+    : '';
+  const tvDateParams = range
+    ? `&first_air_date.gte=${range.gte}&first_air_date.lte=${range.lte}&vote_count.gte=${Math.max(range.minVotes/2,5)}`
+    : '';
+  const sortBy = range ? 'popularity.desc' : 'popularity.desc';
 
   if (type === 'hollywood') {
     let endpoint;
-    if      (movieSortMode==='week')  endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${weekAgo}&primary_release_date.lte=${today}&vote_count.gte=5&page=${page}`;
-    else if (movieSortMode==='month') endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${monthAgo}&primary_release_date.lte=${today}&vote_count.gte=10&page=${page}`;
-    else if (movieSortMode==='year')  endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${yearAgo}&primary_release_date.lte=${today}&vote_count.gte=20&page=${page}`;
-    else                              endpoint = `/movie/popular?page=${page}`;
+    if (range) endpoint = `/discover/movie?sort_by=popularity.desc${movieDateParams}&page=${page}`;
+    else       endpoint = `/movie/popular?page=${page}`;
     const d = await api(endpoint);
     return (d.results||[]).map((r,i) => toItem(r,i));
   }
 
   if (type === 'series') {
-    // Respect the selected country
     const country = seriesCountry;
-    let endpoint;
-    if (country === 'all') endpoint = `/discover/tv?sort_by=popularity.desc&vote_count.gte=20&page=${page}`;
-    else                   endpoint = `/discover/tv?with_origin_country=${country}&sort_by=popularity.desc&vote_count.gte=5&page=${page}`;
-    const d = await api(endpoint);
+    // Build base without vote_count so tvDateParams can add its own cleanly
+    let base, voteMin;
+    if (country === 'all') {
+      voteMin = range ? Math.max(range.minVotes/2, 5) : 20;
+      base = `/discover/tv?sort_by=popularity.desc`;
+    } else {
+      voteMin = range ? Math.max(range.minVotes/2, 5) : 5;
+      base = `/discover/tv?with_origin_country=${country}&sort_by=popularity.desc`;
+    }
+    // Add date filter if active
+    if (range) {
+      base += `&first_air_date.gte=${range.gte}&first_air_date.lte=${range.lte}`;
+    }
+    base += `&vote_count.gte=${voteMin}&page=${page}`;
+    const d = await api(base);
     return (d.results||[]).map((r,i) => ({...toItem(r,i), isTv:true}));
   }
 
   if (type === 'nollywood') {
-    const [tv, mv] = await Promise.all([
-      api(`/discover/tv?with_origin_country=NG&sort_by=popularity.desc&page=${page}`),
-      api(`/discover/movie?with_origin_country=NG&sort_by=popularity.desc&page=${page}`),
+    const [tv, mv, yoMv, afMg] = await Promise.allSettled([
+      api(`/discover/tv?with_origin_country=NG&sort_by=popularity.desc${tvDateParams}&page=${page}`),
+      api(`/discover/movie?with_origin_country=NG&sort_by=popularity.desc${movieDateParams}&page=${page}`),
+      api(`/discover/movie?with_original_language=yo&sort_by=popularity.desc${movieDateParams}&page=${page}`),
+      api(`/discover/tv?with_networks=3040&sort_by=popularity.desc&page=${page}`),
     ]);
-    return [...(mv.results||[]).map((r,i) => toItem(r,i)), ...(tv.results||[]).map((r,i) => ({...toItem(r,i+10), isTv:true}))]
-      .sort(()=>Math.random()-.5);
+    const movies = [
+      ...(mv.status==='fulfilled'   ? mv.value.results||[]   : []),
+      ...(yoMv.status==='fulfilled' ? yoMv.value.results||[] : []),
+    ].filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i).map((r,i) => ({...toItem(r,i), flag:'🇳🇬'}));
+    const tvs = [
+      ...(tv.status==='fulfilled'   ? tv.value.results||[]   : []),
+      ...(afMg.status==='fulfilled' ? afMg.value.results||[] : []),
+    ].filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i).map((r,i) => ({...toItem(r,i+10), isTv:true, flag:'🎬'}));
+    return [...movies, ...tvs].sort(()=>Math.random()-.5);
   }
 
   if (type === 'kdrama') {
-    const d = await api(`/discover/tv?with_origin_country=KR&sort_by=popularity.desc&vote_count.gte=10&page=${page}`);
+    const d = await api(`/discover/tv?with_origin_country=KR&sort_by=popularity.desc${tvDateParams}&page=${page}`);
     return (d.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'🇰🇷'}));
   }
 
   if (type === 'cdrama') {
-    const d = await api(`/discover/tv?with_origin_country=CN&sort_by=popularity.desc&page=${page}`);
+    const d = await api(`/discover/tv?with_origin_country=CN&sort_by=popularity.desc${tvDateParams}&page=${page}`);
     return (d.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'🇨🇳'}));
   }
 
@@ -1747,20 +2153,31 @@ async function loadHero() {
 
 // TMDB genre IDs for TV
 // Movie sort state
-let movieSortMode = 'week';
+let movieSortMode = 'alltime';
+
+// Build date range from sort mode
+function getMovieDateRange(mode) {
+  const today    = new Date().toISOString().slice(0,10);
+  const weekAgo  = new Date(Date.now()-7*86400000).toISOString().slice(0,10);
+  const monthAgo = new Date(Date.now()-30*86400000).toISOString().slice(0,10);
+  if (mode === 'week')       return { gte: weekAgo,    lte: today,      minVotes: 5  };
+  if (mode === 'month')      return { gte: monthAgo,   lte: today,      minVotes: 10 };
+  if (mode === '2025')       return { gte: '2025-01-01', lte: '2025-12-31', minVotes: 20 };
+  if (mode === '2024')       return { gte: '2024-01-01', lte: '2024-12-31', minVotes: 30 };
+  if (mode === '2023')       return { gte: '2023-01-01', lte: '2023-12-31', minVotes: 30 };
+  if (mode === '2020-2022')  return { gte: '2020-01-01', lte: '2022-12-31', minVotes: 50 };
+  if (mode === '2010-2019')  return { gte: '2010-01-01', lte: '2019-12-31', minVotes: 100 };
+  if (mode === '2000-2009')  return { gte: '2000-01-01', lte: '2009-12-31', minVotes: 100 };
+  return null; // alltime — use popular endpoint
+}
 
 async function loadNTW(mode) {
   mode = mode || movieSortMode;
   carSkels('ntwCar', 10);
-  const today    = new Date().toISOString().slice(0,10);
-  const weekAgo  = new Date(Date.now()-7*86400000).toISOString().slice(0,10);
-  const monthAgo = new Date(Date.now()-30*86400000).toISOString().slice(0,10);
-  const yearAgo  = new Date(Date.now()-365*86400000).toISOString().slice(0,10);
+  const range = getMovieDateRange(mode);
   let endpoint;
-  if      (mode==='week')   endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${weekAgo}&primary_release_date.lte=${today}&vote_count.gte=5`;
-  else if (mode==='month')  endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${monthAgo}&primary_release_date.lte=${today}&vote_count.gte=10`;
-  else if (mode==='year')   endpoint = `/discover/movie?sort_by=release_date.desc&primary_release_date.gte=${yearAgo}&primary_release_date.lte=${today}&vote_count.gte=20`;
-  else                      endpoint = `/movie/popular?page=1`;
+  if (range) endpoint = `/discover/movie?sort_by=popularity.desc&primary_release_date.gte=${range.gte}&primary_release_date.lte=${range.lte}&vote_count.gte=${range.minVotes}&page=1`;
+  else       endpoint = `/movie/popular?page=1`;
   const d = await api(endpoint);
   const items = (d.results||[]).slice(0,16).map((r,i) => toItem(r,i));
   renderCar('ntwCar', items);
@@ -1787,13 +2204,60 @@ async function loadSerCar(country) {
     results = seriesCache[country];
   } else {
     let popular, airing;
-    if (country === 'all') {
+
+    if (country === 'airing') {
+      // 🔴 Airing Now — show live-specific skeleton label while 3 calls run in parallel
+      const carEl = document.getElementById('serCar');
+      if (carEl) carEl.setAttribute('data-loading', 'live');
+
+      const [air1, air2, air3] = await Promise.allSettled([
+        api('/tv/on_the_air?page=1'),
+        api('/tv/on_the_air?page=2'),
+        api('/tv/airing_today?page=1'),
+      ]);
+
+      // allSettled — use whatever calls succeeded, degrade gracefully if any fail
+      const r1 = air1.status === 'fulfilled' ? (air1.value.results||[]) : [];
+      const r2 = air2.status === 'fulfilled' ? (air2.value.results||[]) : [];
+      const r3 = air3.status === 'fulfilled' ? (air3.value.results||[]) : [];
+
+      const combined = [
+        ...r3.map((r,i) => ({...toItem(r,i), isTv:true})),    // today first
+        ...r1.map((r,i) => ({...toItem(r,i+20), isTv:true})),
+        ...r2.map((r,i) => ({...toItem(r,i+40), isTv:true})),
+      ];
+      results = combined
+        .filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i)
+        .map(r => {
+          // Add "airs today" / "airs in X days" label using next_episode_to_air
+          const nextAir = r.nextAirDate;
+          if (nextAir) {
+            const days = Math.round((new Date(nextAir) - new Date()) / 86400000);
+            r.airLabel = days <= 0 ? '📡 Airing Today' :
+                         days === 1 ? '📡 Airs Tomorrow' :
+                         `📡 Airs in ${days}d`;
+          }
+          return r;
+        })
+        .sort((a,b) => {
+          // Sort: airing today first, then by popularity
+          const aScore = a.newEpToday ? 3 : a.newEpWeek ? 2 : a.newEp ? 1 : 0;
+          const bScore = b.newEpToday ? 3 : b.newEpWeek ? 2 : b.newEp ? 1 : 0;
+          return bScore - aScore;
+        })
+        .slice(0, 20);
+
+    } else if (country === 'all') {
       const [pop, air] = await Promise.all([
         api('/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=1'),
         api('/tv/on_the_air?page=1'),
       ]);
       popular = (pop.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'📺'}));
       airing  = (air.results||[]).map((r,i) => ({...toItem(r,i+8), isTv:true, flag:'🔴'}));
+      results = [...airing, ...popular]
+        .filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i)
+        .slice(0,16);
+
     } else {
       const [pop, air] = await Promise.all([
         api(`/discover/tv?with_origin_country=${country}&sort_by=popularity.desc&vote_count.gte=10&page=1`),
@@ -1801,36 +2265,126 @@ async function loadSerCar(country) {
       ]);
       popular = (pop.results||[]).map((r,i) => ({...toItem(r,i), isTv:true}));
       airing  = (air.results||[]).map((r,i) => ({...toItem(r,i+8), isTv:true}));
+      results = [...airing, ...popular]
+        .filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i)
+        .slice(0,16);
     }
-    results = [...airing, ...popular]
-      .filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i)
-      .slice(0,16);
     seriesCache[country] = results;
   }
+
   renderCar('serCar', results);
+
+  // Empty state for Airing Now if all 3 API calls returned nothing
+  if (country === 'airing' && results.length === 0) {
+    const carEl = document.getElementById('serCar');
+    if (carEl) carEl.innerHTML = `<div style="padding:24px 16px;color:var(--ink3);font-size:.8rem;text-align:center;width:100%">
+      <div style="font-size:2rem;margin-bottom:8px">📡</div>
+      <div style="font-weight:700;margin-bottom:4px">Schedule unavailable</div>
+      <div style="font-size:.72rem">Check back soon — airing data updates every few hours</div>
+    </div>`;
+  }
+
+  const todayCount = results.filter(r => r.newEpToday).length;
   const newEpCount = results.filter(r => r.newEp).length;
   const el = document.getElementById('serCnt');
-  if(el) el.textContent = results.length+' series'+(newEpCount>0?` · 🔴 ${newEpCount} new ep`:'');
+  if (el) {
+    if (country === 'airing') {
+      el.textContent = `${results.length} airing${todayCount>0 ? ` · 🔴 ${todayCount} today` : ''}`;
+    } else {
+      el.textContent = results.length+' series'+(newEpCount>0?` · 🔴 ${newEpCount} new ep`:'');
+    }
+  }
 }
 
-function switchSerCountry(country, btn) {
-  seriesCountry = country;
-  document.querySelectorAll('.ser-gtab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  loadSerCar(country);
+
+/* ── AIRING THIS WEEK carousel ── */
+async function loadAiringWeek() {
+  carSkels('airingCar', 10);
+  try {
+    // Fetch on_the_air (next 7 days) + airing_today in parallel
+    const [onAir, today] = await Promise.all([
+      api('/tv/on_the_air?page=1'),
+      api('/tv/airing_today?page=1'),
+    ]);
+    const todayItems = (today.results||[]).map((r,i) => ({...toItem(r,i), isTv:true}));
+    const onAirItems = (onAir.results||[]).map((r,i) => ({...toItem(r,i+20), isTv:true}));
+
+    // Merge, dedupe, keep only those with a known next_episode_to_air in next 7 days
+    const all = [...todayItems, ...onAirItems]
+      .filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i)
+      .filter(r => r.newEpToday || r.newEpWeek || r.nextAirDate)
+      .map(r => {
+        // Build a precise air label using nextAirDate
+        if (r.nextAirDate) {
+          const d = Math.round((new Date(r.nextAirDate) - new Date()) / 86400000);
+          if (d <= 0) r.airLabel = '📡 Airing Today';
+          else if (d === 1) r.airLabel = '📡 Tomorrow';
+          else r.airLabel = `📡 ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][new Date(r.nextAirDate).getDay()]} (${d}d)`;
+        } else if (r.newEpToday) {
+          r.airLabel = '📡 Airing Today';
+        }
+        return r;
+      })
+      // Sort: today first, then by days until next episode
+      .sort((a,b) => {
+        const aD = a.nextAirDate ? new Date(a.nextAirDate) : new Date(a.lastAirDate||0);
+        const bD = b.nextAirDate ? new Date(b.nextAirDate) : new Date(b.lastAirDate||0);
+        const aToday = a.newEpToday ? -1 : 0;
+        const bToday = b.newEpToday ? -1 : 0;
+        return (aToday - bToday) || (aD - bD);
+      })
+      .slice(0, 20);
+
+    const sec = document.getElementById('sec-airing-week');
+    if (!all.length) {
+      if (sec) sec.style.display = 'none';
+      return;
+    }
+    if (sec) sec.style.display = 'block';
+    renderCar('airingCar', all);
+
+    // Update count badge
+    const todayCount = all.filter(r => r.newEpToday || r.airLabel?.includes('Today')).length;
+    const cnt = document.getElementById('airingCnt');
+    if (cnt) cnt.textContent = `${all.length} series${todayCount > 0 ? ` · 🔴 ${todayCount} today` : ''}`;
+
+  } catch(e) {
+    console.error('loadAiringWeek failed', e);
+    const sec = document.getElementById('sec-airing-week');
+    if (sec) sec.style.display = 'none';
+  }
 }
 
-/* ── FIX 2: loadNolCar() function declaration was missing — restored ── */
+
 async function loadNolCar() {
-  const [tv, mv] = await Promise.all([
-    api('/discover/tv?with_origin_country=NG&sort_by=popularity.desc&page=1'),
+  // Multi-source Nollywood strategy:
+  // 1. Nigerian origin (official)
+  // 2. Yoruba language films (yo) — catches local language productions
+  // 3. Africa Magic network (ID 3040) — Tinsel, Battleground, etc.
+  // 4. Nigerian origin TV series
+  const [mv1, mv2, mv3, tv1] = await Promise.allSettled([
     api('/discover/movie?with_origin_country=NG&sort_by=popularity.desc&page=1'),
+    api('/discover/movie?with_original_language=yo&sort_by=popularity.desc&page=1'),
+    api('/discover/tv?with_networks=3040&sort_by=popularity.desc&page=1'),
+    api('/discover/tv?with_origin_country=NG&sort_by=popularity.desc&page=1'),
   ]);
-  const tvi = (tv.results||[]).slice(0,7).map((r,i) => ({...toItem(r,i), isTv:true, flag:'🎬'}));
-  const mvi = (mv.results||[]).slice(0,7).map((r,i) => ({...toItem(r,i+7), flag:'🇳🇬'}));
-  const all = [...mvi,...tvi];
+  const movies  = [
+    ...(mv1.status==='fulfilled' ? mv1.value.results||[] : []),
+    ...(mv2.status==='fulfilled' ? mv2.value.results||[] : []),
+  ];
+  const series  = [
+    ...(mv3.status==='fulfilled' ? mv3.value.results||[] : []),
+    ...(tv1.status==='fulfilled' ? tv1.value.results||[] : []),
+  ];
+  // Dedupe each pool then interleave
+  const mvUniq = movies.filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i)
+    .slice(0,8).map((r,i) => ({...toItem(r,i), flag:'🇳🇬'}));
+  const tvUniq = series.filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i)
+    .slice(0,6).map((r,i) => ({...toItem(r,i+8), isTv:true, flag:'🎬'}));
+  const all = [...mvUniq, ...tvUniq];
   renderCar('nolCar', all);
-  const el = document.getElementById('nolCnt'); if(el) el.textContent = all.length+' titles';
+  const el = document.getElementById('nolCnt');
+  if (el) el.textContent = all.length + ' titles';
 }
 
 async function loadKdrCar() {
@@ -1880,6 +2434,12 @@ async function loadTrending() {
 }
 
 /* ── HOME FTABS ── */
+// fetchSection — used by "Recently Added" tabs on homepage
+// delegates to fetchBrowse so sort mode and country are always respected
+function fetchSection(tab, page=1) {
+  return fetchBrowse(tab, page);
+}
+
 function switchFTab(tab, btn) {
   activeFTab = tab;
   document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
@@ -1888,20 +2448,63 @@ function switchFTab(tab, btn) {
     const s = document.getElementById(`fsec-${t}`);
     if (s) s.style.display = t === tab ? 'block' : 'none';
   });
+
   const grid = document.getElementById(`g-${tab}`);
-  if (grid && grid.children.length < 2) {
-    ftabPages[tab] = 1;
-    gridSkels(`g-${tab}`, 12);
-    fetchSection(tab, 1).then(items => renderGrid(`g-${tab}`, items));
+  const moreBtn = document.getElementById(`more-${tab}`);
+
+  // If grid already has real cards (not skeletons), just show it — no re-fetch needed
+  const hasContent = grid && grid.querySelector('.gcrd');
+  if (hasContent) {
+    if (moreBtn) { moreBtn.textContent = 'Load More'; moreBtn.disabled = false; moreBtn.style.display = 'block'; }
+    return;
   }
+
+  // Grid is empty or has skeletons — fetch now
+  ftabPages[tab] = 1;
+  gridSkels(`g-${tab}`, 12);
+  if (moreBtn) { moreBtn.textContent = 'Load More'; moreBtn.disabled = false; moreBtn.style.display = 'block'; }
+  fetchSection(tab, 1).then(items => {
+    renderGrid(`g-${tab}`, items);
+    if (moreBtn) {
+      if (!items || items.length === 0) {
+        moreBtn.textContent = 'No results';
+        moreBtn.disabled = true;
+      } else {
+        moreBtn.textContent = 'Load More';
+        moreBtn.disabled = false;
+        moreBtn.style.display = 'block';
+      }
+    }
+  }).catch(() => {
+    renderGrid(`g-${tab}`, []);
+    if (moreBtn) { moreBtn.textContent = 'Retry'; moreBtn.disabled = false; }
+  });
 }
+
 async function loadMoreFTab(tab) {
-  ftabPages[tab]++;
   const btn = document.getElementById(`more-${tab}`);
-  if (btn) btn.textContent = 'Loading…';
-  const items = await fetchSection(tab, ftabPages[tab]);
-  renderGrid(`g-${tab}`, items, true);
-  if (btn) btn.textContent = `Load More ${tab.charAt(0).toUpperCase()+tab.slice(1)}`;
+  if (btn) { btn.textContent = 'Loading…'; btn.disabled = true; }
+  try {
+    ftabPages[tab]++;
+    const items = await fetchSection(tab, ftabPages[tab]);
+    if (!items || items.length === 0) {
+      ftabPages[tab]--;
+      if (btn) { btn.textContent = 'No more results'; btn.disabled = true; }
+      return;
+    }
+    // Record scroll position before adding new cards
+    const grid = document.getElementById(`g-${tab}`);
+    const prevBottom = grid ? grid.getBoundingClientRect().bottom + window.scrollY : 0;
+    renderGrid(`g-${tab}`, items, true);
+    if (btn) { btn.textContent = 'Load More'; btn.disabled = false; }
+    // On mobile, scroll just enough to show the first new card
+    if (prevBottom > 0) {
+      setTimeout(() => window.scrollTo({ top: prevBottom - 80, behavior: 'smooth' }), 50);
+    }
+  } catch(e) {
+    ftabPages[tab]--;
+    if (btn) { btn.textContent = 'Retry'; btn.disabled = false; }
+  }
 }
 
 /* ── SEARCH ── */
@@ -1968,6 +2571,9 @@ async function openDetailGated(tmdbId, isTv=false, autoTrailer=false) {
 /* ── DETAIL PAGE ── */
 async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
   const dp = document.getElementById('detPg');
+  // Hide schedule FAB while detail is open
+  const fab = document.getElementById('schedFab');
+  if (fab) fab.classList.add('hidden');
   document.getElementById('detContent').innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:70vh;flex-direction:column;gap:14px;color:var(--ink3)"><div class="spinner"></div><span>Loading…</span></div>`;
   dp.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -2092,7 +2698,7 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
 
     <div style="background:var(--bg3);border:1px solid rgba(155,31,48,.2);border-radius:10px;padding:16px;margin-bottom:14px">
       <div style="margin-bottom:8px;font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3)">Free Stream</div>
-      <div style="position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;background:#000" id="watchOnlineBox">
+      <div class="video-wrap" id="watchOnlineBox">
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg4);cursor:pointer" onclick="loadWatchOnline('${streamUrl}')">
           <div style="width:68px;height:68px;border-radius:50%;background:var(--burg);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(155,31,48,.5);transition:transform .2s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">
             <svg viewBox="0 0 24 24" fill="white" style="width:22px;height:22px;margin-left:4px"><path d="M5 3l14 9-14 9V3z"/></svg>
@@ -2210,7 +2816,7 @@ async function openDetail(tmdbId, isTv=false, autoTrailer=false) {
       ${tKey ? `
       <div style="margin:28px 0">
         <div class="dl-sec-title">🎬 Official Trailer</div>
-        <div style="position:relative;width:100%;padding-top:56.25%;border-radius:10px;overflow:hidden;background:#000" id="trailerBox">
+        <div class="video-wrap" id="trailerBox">
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--bg4);cursor:pointer" onclick="playTrailer('${tKey}')">
             <div style="width:60px;height:60px;border-radius:50%;background:#ff0000;display:flex;align-items:center;justify-content:center;transition:transform .2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform=''">
               <svg viewBox="0 0 24 24" fill="white" style="width:20px;height:20px;margin-left:5px"><path d="M5 3l14 9-14 9V3z"/></svg>
@@ -2360,8 +2966,12 @@ function tglEp(tmdbId, season, ep, btn) {
   if (!epProgress[tmdbId]) epProgress[tmdbId] = {};
   if (!epProgress[tmdbId][season]) epProgress[tmdbId][season] = {};
   epProgress[tmdbId][season][ep] = !epProgress[tmdbId][season][ep];
-  localStorage.setItem('vx-ep', JSON.stringify(epProgress));
   const on = !!epProgress[tmdbId][season][ep];
+  if (userToken) fetch(`${API_BASE}/progress`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${userToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tmdb_id: tmdbId, season, episode: ep, watched: on })
+  }).catch(()=>{});
   btn.className = 'ep-btn wt' + (on?' on':'');
   btn.textContent = on ? '✓ Watched' : 'Mark Watched';
   const row = document.getElementById(`ep_${season}_${ep}`);
@@ -2388,7 +2998,11 @@ function onEpDownload(event, tmdbId, season, epNum, epName, btn) {
       if (!epProgress[tmdbId]) epProgress[tmdbId] = {};
       if (!epProgress[tmdbId][season]) epProgress[tmdbId][season] = {};
       epProgress[tmdbId][season][epNum] = true;
-      localStorage.setItem('vx-ep', JSON.stringify(epProgress));
+      if (userToken) fetch(`${API_BASE}/progress`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${userToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tmdb_id: tmdbId, season, episode: epNum, watched: true })
+      }).catch(()=>{});
       if (row) row.classList.add('watched');
       const wtBtn = row?.querySelector('.ep-btn.wt');
       if (wtBtn) { wtBtn.className = 'ep-btn wt on'; wtBtn.textContent = '✓ Watched'; }
@@ -2459,6 +3073,9 @@ function closeDetail() {
   curDetailItem = null;
   const iframe = dp.querySelector('iframe');
   if (iframe) iframe.src = '';
+  // Show FAB again
+  const fab = document.getElementById('schedFab');
+  if (fab) fab.classList.remove('hidden');
 }
 
 /* ── WATCHLIST ── */
@@ -2468,16 +3085,37 @@ function tglWL(id) {
   tglWLItem(item);
   document.querySelectorAll(`[data-id="${id}"]`).forEach(el => el.classList.toggle('saved', isInWL(id)));
 }
-function tglWLItem(item) {
-  if (isInWL(item.id)) {
+async function tglWLItem(item) {
+  if (!userToken) { changeUser(); return; }
+  const inWL = isInWL(item.id);
+  // Optimistic UI update
+  if (inWL) {
     watchlist = watchlist.filter(w => w.id !== item.id);
     showToast('Removed from Watchlist');
   } else {
     watchlist.push(item);
     showToast('Added to Watchlist ♥');
   }
-  localStorage.setItem('vx-wl', JSON.stringify(watchlist));
   updateWLUI();
+  // Sync to server
+  try {
+    if (inWL) {
+      await fetch(`${API_BASE}/watchlist/${item.id}?type=${item.isTv?'tv':'movie'}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${userToken}` }
+      });
+    } else {
+      await fetch(`${API_BASE}/watchlist`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${userToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tmdb_id: item.id, media_type: item.isTv ? 'tv' : 'movie',
+          title: item.title || '', poster: item.img || '',
+          year: item.year || '', rating: item.rating || ''
+        })
+      });
+    }
+  } catch(e) { console.error('WL sync failed', e); }
 }
 function updateWLUI() {
   const dot = document.getElementById('wlDot');
@@ -2498,13 +3136,31 @@ function renderWLPanel() {
       <span class="wl-rm" onclick="event.stopPropagation();rmWL(${item.id})">✕</span>
     </div>`).join('');
 }
-function rmWL(id) { watchlist=watchlist.filter(w=>w.id!==id); localStorage.setItem('vx-wl',JSON.stringify(watchlist)); updateWLUI(); }
+async function rmWL(id) {
+  const item = watchlist.find(w => w.id === id);
+  watchlist = watchlist.filter(w => w.id !== id);
+  updateWLUI();
+  if (!userToken || !item) return;
+  try {
+    await fetch(`${API_BASE}/watchlist/${id}?type=${item.isTv?'tv':'movie'}`, {
+      method: 'DELETE', headers: { 'Authorization': `Bearer ${userToken}` }
+    });
+  } catch(e) { console.error('rmWL sync failed', e); }
+}
 function addToHistory(item) {
   history_ = history_.filter(h=>h.id!==item.id);
   history_.unshift(item);
   if (history_.length>30) history_ = history_.slice(0,30);
-  localStorage.setItem('vx-hist', JSON.stringify(history_));
   renderHistPanel();
+  if (!userToken) return;
+  fetch(`${API_BASE}/history`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${userToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tmdb_id: item.id, media_type: item.isTv ? 'tv' : 'movie',
+      title: item.title || '', poster: item.img || ''
+    })
+  }).catch(e => console.error('history sync failed', e));
 }
 function renderHistPanel() {
   const el = document.getElementById('histItems'); if (!el) return;
@@ -2517,6 +3173,188 @@ function renderHistPanel() {
 }
 function openWL()  { document.getElementById('wlPanel').classList.add('open'); document.getElementById('panelOv').classList.add('open'); document.body.style.overflow='hidden'; renderWLPanel(); renderHistPanel(); }
 function closeWL() { document.getElementById('wlPanel').classList.remove('open'); document.getElementById('panelOv').classList.remove('open'); document.body.style.overflow=''; }
+
+/* ── LIVE SCHEDULE DRAWER ── */
+const TV_GENRES = {
+  10759:'Action & Adventure',10762:'Kids',10763:'News',10764:'Reality',
+  10765:'Sci-Fi & Fantasy',10766:'Soap',10767:'Talk',10768:'War & Politics',
+  10751:'Family',35:'Comedy',18:'Drama',80:'Crime',99:'Documentary',
+  14:'Fantasy',36:'History',27:'Horror',10402:'Music',9648:'Mystery',
+  10749:'Romance',878:'Sci-Fi',10770:'TV Movie',53:'Thriller',37:'Western',
+  28:'Action',12:'Adventure',16:'Animation'
+};
+const COUNTRY_FLAGS = {KR:'🇰🇷',NG:'🇳🇬',CN:'🇨🇳',JP:'🇯🇵',US:'🇺🇸',GB:'🇬🇧',IN:'🇮🇳',TR:'🇹🇷',ES:'🇪🇸',FR:'🇫🇷'};
+
+let schedFilter = 'airing';
+let schedCache  = {};
+
+function openSched() {
+  document.getElementById('schedDrawer').classList.add('open');
+  document.getElementById('schedOv').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  const fab = document.getElementById('schedFab');
+  if (fab) fab.classList.add('hidden');
+  if (!schedCache[schedFilter]) loadSchedData(schedFilter);
+}
+function closeSched() {
+  document.getElementById('schedDrawer').classList.remove('open');
+  document.getElementById('schedOv').classList.remove('open');
+  document.body.style.overflow = '';
+  const fab = document.getElementById('schedFab');
+  if (fab) fab.classList.remove('hidden');
+}
+function filterSched(filter, btn) {
+  schedFilter = filter;
+  document.querySelectorAll('#schedFilters .sched-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (schedCache[filter]) {
+    renderSchedList(schedCache[filter]);
+  } else {
+    document.getElementById('schedList').innerHTML = '<div class="sched-loading"><div class="spinner" style="margin-bottom:12px"></div><div>Loading…</div></div>';
+    loadSchedData(filter);
+  }
+}
+
+async function loadSchedData(filter) {
+  const list = document.getElementById('schedList');
+  // Show skeleton rows
+  list.innerHTML = Array(6).fill(0).map(() => `
+    <div class="sched-skel-item">
+      <div class="sked-poster-ph skel" style="width:46px;height:69px;border-radius:6px;flex-shrink:0"></div>
+      <div style="flex:1">
+        <div class="skel" style="height:8px;width:40%;border-radius:3px;margin-bottom:6px"></div>
+        <div class="skel" style="height:11px;width:75%;border-radius:3px;margin-bottom:6px"></div>
+        <div class="skel" style="height:8px;width:55%;border-radius:3px"></div>
+      </div>
+    </div>`).join('');
+
+  let results = [];
+  try {
+    if (filter === 'airing') {
+      // Today's episodes only
+      const [t1, t2] = await Promise.allSettled([
+        api('/tv/airing_today?page=1'),
+        api('/tv/airing_today?page=2'),
+      ]);
+      results = [
+        ...(t1.status==='fulfilled' ? t1.value.results||[] : []),
+        ...(t2.status==='fulfilled' ? t2.value.results||[] : []),
+      ];
+    } else if (filter === 'week') {
+      const [w1, w2, w3] = await Promise.allSettled([
+        api('/tv/on_the_air?page=1'),
+        api('/tv/on_the_air?page=2'),
+        api('/tv/on_the_air?page=3'),
+      ]);
+      results = [
+        ...(w1.status==='fulfilled' ? w1.value.results||[] : []),
+        ...(w2.status==='fulfilled' ? w2.value.results||[] : []),
+        ...(w3.status==='fulfilled' ? w3.value.results||[] : []),
+      ];
+    } else if (filter === 'all') {
+      const [a1, a2] = await Promise.allSettled([
+        api('/tv/airing_today?page=1'),
+        api('/tv/on_the_air?page=1'),
+      ]);
+      results = [
+        ...(a1.status==='fulfilled' ? a1.value.results||[] : []),
+        ...(a2.status==='fulfilled' ? a2.value.results||[] : []),
+      ];
+    } else {
+      // Country filter
+      const [c1, c2] = await Promise.allSettled([
+        api(`/discover/tv?with_origin_country=${filter}&sort_by=popularity.desc&page=1`),
+        api(`/tv/on_the_air?page=1`),
+      ]);
+      const countryShows = new Set((c1.status==='fulfilled' ? c1.value.results||[] : []).map(r=>r.id));
+      const airing       = (c2.status==='fulfilled' ? c2.value.results||[] : []);
+      // Shows airing this week that are from that country
+      results = airing.filter(r => countryShows.has(r.id));
+      // If fewer than 5, also include the popular country shows
+      if (results.length < 5) {
+        const fallback = (c1.status==='fulfilled' ? c1.value.results||[] : []).slice(0,20);
+        results = [...results, ...fallback].filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i);
+      }
+    }
+  } catch(e) { console.error('Schedule fetch error', e); }
+
+  // Dedupe
+  results = results.filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i);
+  schedCache[filter] = results;
+  renderSchedList(results);
+}
+
+function renderSchedList(results) {
+  const list = document.getElementById('schedList');
+  if (!results.length) {
+    list.innerHTML = `<div class="sched-loading">
+      <div style="font-size:2rem;margin-bottom:8px">📡</div>
+      <div style="font-weight:700;margin-bottom:4px">No shows found</div>
+      <div style="font-size:.72rem">Try "This Week" or a different country</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = results.map(r => {
+    const item = toItem(r);
+    // Genre label — first recognisable genre from the ID list
+    const genreName = (r.genre_ids||[]).map(id => TV_GENRES[id]).find(Boolean) || 'Series';
+    // Episode info from TMDB's next/last episode fields
+    const nxt = r.next_episode_to_air;
+    const lst = r.last_episode_to_air;
+    let epInfo = '';
+    if (nxt) epInfo = `S${nxt.season_number} E${nxt.episode_number}${nxt.name ? ' · '+nxt.name.slice(0,28) : ''}`;
+    else if (lst) epInfo = `Latest: S${lst.season_number} E${lst.episode_number}`;
+    // Air label
+    const nextDate = nxt?.air_date;
+    let airLabel = '', airClass = 'sched-air-soon';
+    if (nextDate) {
+      const days = Math.round((new Date(nextDate) - new Date()) / 86400000);
+      if (days <= 0)      { airLabel = '🔴 Airing Today';  airClass = 'sched-air-today'; }
+      else if (days === 1){ airLabel = '⏰ Airs Tomorrow'; airClass = 'sched-air-tmrw';  }
+      else                { airLabel = `📅 Airs in ${days}d`; }
+    } else if (item.newEpToday) { airLabel = '🔴 Airing Today'; airClass = 'sched-air-today'; }
+    else if (item.newEpWeek)    { airLabel = '✅ New This Week'; airClass = 'sched-air-tmrw'; }
+    // Country flag
+    const origins = r.origin_country || [];
+    const flag = origins.map(c => COUNTRY_FLAGS[c]).find(Boolean) || '';
+    // Rating
+    const rating = r.vote_average ? `★ ${r.vote_average.toFixed(1)}` : '';
+
+    return `<div class="sched-item" onclick="closeSched();openDetailGated(${r.id},true)">
+      ${r.poster_path
+        ? `<img class="sched-poster" src="${IMG}${r.poster_path}" alt="${esc(r.name||'')}" loading="lazy" onload="this.classList.add('loaded')">`
+        : `<div class="sched-poster-ph">🎬</div>`}
+      <div class="sched-info">
+        <div class="sched-meta-row">
+          <span class="sched-genre">${genreName}</span>
+          ${flag ? `<span class="sched-country">${flag}</span>` : ''}
+        </div>
+        <div class="sched-title">${esc(r.name||r.title||'')}</div>
+        ${epInfo ? `<div class="sched-ep">${esc(epInfo)}</div>` : ''}
+        ${rating ? `<div class="sched-rating">${rating}</div>` : ''}
+      </div>
+      <div class="sched-time">
+        ${airLabel ? `<div class="sched-air-label ${airClass}">${airLabel}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Also open schedule when tapping the Airing Now carousel tab
+function switchSerCountry(country, btn) {
+  seriesCountry = country;
+  seriesCache[country] = null;
+  document.querySelectorAll('.ser-gtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (country === 'airing') {
+    // Airing tab — load carousel AND open full schedule drawer
+    loadSerCar(country);
+    openSched();
+  } else {
+    loadSerCar(country);
+  }
+}
 function switchPTab(id, btn) {
   document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.ptab-body').forEach(b=>b.classList.remove('active'));
@@ -2663,15 +3501,99 @@ async function likeCmt(cmtId, tmdbId, btn) {
 }
 
 /* ── USERNAME ── */
-function saveUser() {
+async function saveUser() {
   const v = document.getElementById('uField').value.trim();
   if (v.length < 2) { alert('At least 2 characters please!'); return; }
-  currentUser = v; localStorage.setItem('vx-user', v);
-  document.getElementById('uOverlay').classList.remove('open');
-  showToast(`Welcome, ${v}! 🎬`);
+  const btn = document.querySelector('#uModalMain .btn-prim');
+  if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
+  try {
+    // Try register first, fall back to login with existing token
+    let res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: v })
+    });
+    let data = await res.json();
+    // If username taken, try logging in with stored token
+    if (res.status === 409) {
+      if (!userToken) {
+        alert('That username is taken — try a different one!');
+        if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Save Username'; }
+        return;
+      }
+      res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: userToken })
+      });
+      data = await res.json();
+    }
+    if (!data.success) throw new Error(data.error || 'Failed');
+    // Store token and user info
+    userToken   = data.token || userToken;
+    currentUser = data.user.username;
+    userId      = data.user.id;
+    localStorage.setItem('vx-token', userToken);
+    // Load watchlist and history from server
+    await Promise.allSettled([syncWatchlist(), syncHistory()]);
+    document.getElementById('uOverlay').classList.remove('open');
+    const lbl = document.getElementById('profileLabel');
+    if (lbl) lbl.textContent = currentUser;
+    const h2 = document.querySelector('#uModalMain h2');
+    if (h2) h2.innerHTML = '👤 <em>My Profile</em>';
+    const isReturning = watchlist.length > 0;
+    showToast(isReturning ? `Welcome back, ${currentUser}! Your watchlist is synced. 🎬` : `Welcome to VELOX, ${currentUser}! 🎬`);
+  } catch(e) {
+    alert('Could not connect — check your internet and try again.');
+    console.error(e);
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Save Username'; }
+  }
 }
-function changeUser() { document.getElementById('uField').value=currentUser; document.getElementById('uOverlay').classList.add('open'); setTimeout(()=>document.getElementById('uField').focus(),100); }
+
+async function syncWatchlist() {
+  if (!userToken) return;
+  const res = await fetch(`${API_BASE}/watchlist`, {
+    headers: { 'Authorization': `Bearer ${userToken}` }
+  });
+  const data = await res.json();
+  if (data.watchlist) {
+    watchlist = data.watchlist.map(r => ({
+      id: r.tmdb_id, title: r.title, img: r.poster,
+      year: r.year, isTv: r.media_type === 'tv', rating: r.rating
+    }));
+    updateWLUI();
+  }
+}
+
+async function syncHistory() {
+  if (!userToken) return;
+  const res = await fetch(`${API_BASE}/history`, {
+    headers: { 'Authorization': `Bearer ${userToken}` }
+  });
+  const data = await res.json();
+  if (data.history) {
+    history_ = data.history.map(r => ({
+      id: r.tmdb_id, title: r.title, img: r.poster, isTv: r.media_type === 'tv'
+    }));
+    renderHistPanel();
+  }
+}
+function changeUser() {
+  document.getElementById('uField').value = currentUser;
+  // Show correct heading based on whether user exists
+  const h2 = document.querySelector('#uModalMain h2');
+  if (h2) h2.innerHTML = currentUser ? '👤 <em>My Profile</em>' : 'JOIN <em>VELOX</em>';
+  showMain();
+  document.getElementById('uOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('uField').focus(), 100);
+}
+
+
 document.getElementById('uField').addEventListener('keydown', e => { if(e.key==='Enter') saveUser(); });
+
+
+
 
 /* ── THEME ── */
 function toggleTheme() {
@@ -2710,25 +3632,97 @@ window.addEventListener('scroll', () => document.getElementById('hdr').classList
 
 /* ── KEYBOARD ── */
 document.addEventListener('keydown', e => {
-  if (e.key==='Escape') { closeDetail(); closeWL(); closeMob(); closeSearch(); }
+  if (e.key==='Escape') { closeDetail(); closeWL(); closeMob(); closeSearch(); closeSched(); }
 });
 
 /* ── INIT ── */
 async function init() {
-  if (!currentUser) setTimeout(() => document.getElementById('uOverlay').classList.add('open'), 1400);
-  renderMoods(); renderGenres(); updateWLUI(); renderHistPanel();
+  // Auto-restore session from stored token
+if (userToken) {
+  fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: userToken })
+  }).then(r => r.json()).then(async data => {
+    if (data.success) {
+      currentUser = data.user.username;
+      userId = data.user.id;
+      const lbl = document.getElementById('profileLabel');
+      if (lbl) lbl.textContent = currentUser;
+      const h2 = document.querySelector('#uModalMain h2');
+      if (h2) h2.innerHTML = '👤 <em>My Profile</em>';
+      await Promise.allSettled([syncWatchlist(), syncHistory()]);
+    } else {
+      // Token invalid, clear it
+      localStorage.removeItem('vx-token');
+      userToken = '';
+      setTimeout(() => document.getElementById('uOverlay').classList.add('open'), 1400);
+    }
+  }).catch(() => {
+    setTimeout(() => document.getElementById('uOverlay').classList.add('open'), 1400);
+  });
+} else {
+  setTimeout(() => document.getElementById('uOverlay').classList.add('open'), 1400);
+}
+   updateWLUI(); renderHistPanel();
   carSkels('ntwCar',10); carSkels('serCar',10); carSkels('nolCar',10); carSkels('kdrCar',10); carSkels('cdrCar',10);
-  gridSkels('g-hollywood', 12);
+
+  // Pre-load all Recently Added tabs at once — skels for all, fetch in parallel
+  ['hollywood','series','nollywood','kdrama','cdrama','trailers'].forEach(t => gridSkels(`g-${t}`, 12));
+
   await Promise.all([
     loadHero(),
     loadNTW(),
+    loadAiringWeek(),
     loadSerCar(),
     loadNolCar(),
     loadKdrCar(),
     loadCdrCar(),
     loadTrending(),
-    fetchSection('hollywood',1).then(items => renderGrid('g-hollywood', items)),
+    fetchSection('hollywood', 1).then(items => {
+      renderGrid('g-hollywood', items);
+      const btn = document.getElementById('more-hollywood');
+      if (btn) btn.style.display = items.length === 0 ? 'none' : 'block';
+    }),
+    fetchSection('series', 1).then(items => {
+      renderGrid('g-series', items);
+      const btn = document.getElementById('more-series');
+      if (btn) btn.style.display = items.length === 0 ? 'none' : 'block';
+    }),
+    fetchSection('nollywood', 1).then(items => {
+      renderGrid('g-nollywood', items);
+      const btn = document.getElementById('more-nollywood');
+      if (btn) btn.style.display = items.length === 0 ? 'none' : 'block';
+    }),
+    fetchSection('kdrama', 1).then(items => {
+      renderGrid('g-kdrama', items);
+      const btn = document.getElementById('more-kdrama');
+      if (btn) btn.style.display = items.length === 0 ? 'none' : 'block';
+    }),
+    fetchSection('cdrama', 1).then(items => {
+      renderGrid('g-cdrama', items);
+      const btn = document.getElementById('more-cdrama');
+      if (btn) btn.style.display = items.length === 0 ? 'none' : 'block';
+    }),
+    fetchSection('trailers', 1).then(items => {
+      renderGrid('g-trailers', items);
+      const btn = document.getElementById('more-trailers');
+      if (btn) btn.style.display = items.length === 0 ? 'none' : 'block';
+    }),
   ]);
+
+  // ── AUTO-REFRESH every 30 minutes ──
+  // Silently refreshes episode badges + Airing This Week so viewers
+  // see new episodes drop without manually reloading the page
+  setInterval(async () => {
+    if (document.hidden) return; // skip if tab isn't visible — saves data
+    seriesCache = {};            // clear cache so fresh episode dates are fetched
+    await Promise.allSettled([
+      loadAiringWeek(),
+      loadSerCar(seriesCountry),
+    ]);
+    if (currentView === 'home') loadNTW(movieSortMode);
+  }, 30 * 60 * 1000); // every 30 minutes
 }
 
 /* ── DATA SAVER MODE ── */
@@ -2796,6 +3790,10 @@ function closePage() {
   document.getElementById('pageModal').style.display = 'none';
   document.body.style.overflow = '';
 }
+
+// Set profile label on load if user already exists
+const _lbl = document.getElementById('profileLabel');
+if (_lbl && currentUser) _lbl.textContent = currentUser;
 
 init();
 </script>

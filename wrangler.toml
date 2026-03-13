@@ -1,0 +1,8 @@
+name = "velox-worker"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "velox_db"
+database_name = "velox-db"
+database_id = "dfb187ec-946f-49a6-b5da-673bd5a23f5e"
