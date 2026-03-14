@@ -1041,6 +1041,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .main{padding:0 16px 60px}
   .browse-page{padding:0 16px 60px}
   /* All sections visible on all screens */
+}
 
 /* ── MOBILE LARGE 540px: mood bar simplifies, genre gone ── */
 @media(max-width:540px){
@@ -3584,7 +3585,6 @@ function changeUser() {
   // Show correct heading based on whether user exists
   const h2 = document.querySelector('#uModalMain h2');
   if (h2) h2.innerHTML = currentUser ? '👤 <em>My Profile</em>' : 'JOIN <em>VELOX</em>';
-  showMain();
   document.getElementById('uOverlay').classList.add('open');
   setTimeout(() => document.getElementById('uField').focus(), 100);
 }
