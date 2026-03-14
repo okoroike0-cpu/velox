@@ -1666,7 +1666,7 @@ const AV_COLORS = ["#9b1f30","#2563eb","#16a34a","#b45309","#7c3aed","#0891b2","
 
 /* ── STATE ── */
 let currentUser = '';
-let userToken   = localStorage.getItem('vx-token') || '';
+let userToken = '';
 let userId      = null;
 let watchlist   = [];
 let history_    = [];
@@ -1737,6 +1737,7 @@ async function getVeloxLinks(tmdbId, isTv) {
 
 
 /* ── API (via Cloudflare Worker — key hidden) ── */
+const WORKER = 'https://velox-worker.ikoromichael592.workers.dev';
 async function api(path) {
   try {
     const r = await fetch(`${WORKER}?path=${encodeURIComponent(path)}`);
@@ -2968,11 +2969,7 @@ function tglEp(tmdbId, season, ep, btn) {
   if (!epProgress[tmdbId][season]) epProgress[tmdbId][season] = {};
   epProgress[tmdbId][season][ep] = !epProgress[tmdbId][season][ep];
   const on = !!epProgress[tmdbId][season][ep];
-  if (userToken) fetch(`${API_BASE}/progress`, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${userToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tmdb_id: tmdbId, season, episode: ep, watched: on })
-  }).catch(()=>{});
+  localStorage.setItem('vx-progress', JSON.stringify(epProgress));
   btn.className = 'ep-btn wt' + (on?' on':'');
   btn.textContent = on ? '✓ Watched' : 'Mark Watched';
   const row = document.getElementById(`ep_${season}_${ep}`);
@@ -2999,11 +2996,7 @@ function onEpDownload(event, tmdbId, season, epNum, epName, btn) {
       if (!epProgress[tmdbId]) epProgress[tmdbId] = {};
       if (!epProgress[tmdbId][season]) epProgress[tmdbId][season] = {};
       epProgress[tmdbId][season][epNum] = true;
-      if (userToken) fetch(`${API_BASE}/progress`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${userToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tmdb_id: tmdbId, season, episode: epNum, watched: true })
-      }).catch(()=>{});
+      localStorage.setItem('vx-progress', JSON.stringify(epProgress));
       if (row) row.classList.add('watched');
       const wtBtn = row?.querySelector('.ep-btn.wt');
       if (wtBtn) { wtBtn.className = 'ep-btn wt on'; wtBtn.textContent = '✓ Watched'; }
@@ -3087,9 +3080,7 @@ function tglWL(id) {
   document.querySelectorAll(`[data-id="${id}"]`).forEach(el => el.classList.toggle('saved', isInWL(id)));
 }
 async function tglWLItem(item) {
-  if (!userToken) { changeUser(); return; }
   const inWL = isInWL(item.id);
-  // Optimistic UI update
   if (inWL) {
     watchlist = watchlist.filter(w => w.id !== item.id);
     showToast('Removed from Watchlist');
@@ -3097,26 +3088,8 @@ async function tglWLItem(item) {
     watchlist.push(item);
     showToast('Added to Watchlist ♥');
   }
+  localStorage.setItem('vx-watchlist', JSON.stringify(watchlist));
   updateWLUI();
-  // Sync to server
-  try {
-    if (inWL) {
-      await fetch(`${API_BASE}/watchlist/${item.id}?type=${item.isTv?'tv':'movie'}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${userToken}` }
-      });
-    } else {
-      await fetch(`${API_BASE}/watchlist`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${userToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tmdb_id: item.id, media_type: item.isTv ? 'tv' : 'movie',
-          title: item.title || '', poster: item.img || '',
-          year: item.year || '', rating: item.rating || ''
-        })
-      });
-    }
-  } catch(e) { console.error('WL sync failed', e); }
 }
 function updateWLUI() {
   const dot = document.getElementById('wlDot');
@@ -3138,30 +3111,16 @@ function renderWLPanel() {
     </div>`).join('');
 }
 async function rmWL(id) {
-  const item = watchlist.find(w => w.id === id);
   watchlist = watchlist.filter(w => w.id !== id);
+  localStorage.setItem('vx-watchlist', JSON.stringify(watchlist));
   updateWLUI();
-  if (!userToken || !item) return;
-  try {
-    await fetch(`${API_BASE}/watchlist/${id}?type=${item.isTv?'tv':'movie'}`, {
-      method: 'DELETE', headers: { 'Authorization': `Bearer ${userToken}` }
-    });
-  } catch(e) { console.error('rmWL sync failed', e); }
 }
 function addToHistory(item) {
   history_ = history_.filter(h=>h.id!==item.id);
   history_.unshift(item);
   if (history_.length>30) history_ = history_.slice(0,30);
+  localStorage.setItem('vx-history', JSON.stringify(history_));
   renderHistPanel();
-  if (!userToken) return;
-  fetch(`${API_BASE}/history`, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${userToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      tmdb_id: item.id, media_type: item.isTv ? 'tv' : 'movie',
-      title: item.title || '', poster: item.img || ''
-    })
-  }).catch(e => console.error('history sync failed', e));
 }
 function renderHistPanel() {
   const el = document.getElementById('histItems'); if (!el) return;
@@ -3505,81 +3464,14 @@ async function likeCmt(cmtId, tmdbId, btn) {
 async function saveUser() {
   const v = document.getElementById('uField').value.trim();
   if (v.length < 2) { alert('At least 2 characters please!'); return; }
-  const btn = document.querySelector('#uModalMain .btn-prim');
-  if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
-  try {
-    // Try register first, fall back to login with existing token
-    let res = await fetch(`${API_BASE}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: v })
-    });
-    let data = await res.json();
-    // If username taken, try logging in with stored token
-    if (res.status === 409) {
-      if (!userToken) {
-        alert('That username is taken — try a different one!');
-        if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Save Username'; }
-        return;
-      }
-      res = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: userToken })
-      });
-      data = await res.json();
-    }
-    if (!data.success) throw new Error(data.error || 'Failed');
-    // Store token and user info
-    userToken   = data.token || userToken;
-    currentUser = data.user.username;
-    userId      = data.user.id;
-    localStorage.setItem('vx-token', userToken);
-    // Load watchlist and history from server
-    await Promise.allSettled([syncWatchlist(), syncHistory()]);
-    document.getElementById('uOverlay').classList.remove('open');
-    const lbl = document.getElementById('profileLabel');
-    if (lbl) lbl.textContent = currentUser;
-    const h2 = document.querySelector('#uModalMain h2');
-    if (h2) h2.innerHTML = '👤 <em>My Profile</em>';
-    const isReturning = watchlist.length > 0;
-    showToast(isReturning ? `Welcome back, ${currentUser}! Your watchlist is synced. 🎬` : `Welcome to VELOX, ${currentUser}! 🎬`);
-  } catch(e) {
-    alert('Could not connect — check your internet and try again.');
-    console.error(e);
-  } finally {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Save Username'; }
-  }
+  currentUser = v;
+  localStorage.setItem('vx-user', v);
+  document.getElementById('uOverlay').classList.remove('open');
+  const lbl = document.getElementById('profileLabel');
+  if (lbl) lbl.textContent = currentUser;
+  showToast(`Welcome to VELOX, ${currentUser}! 🎬`);
 }
 
-async function syncWatchlist() {
-  if (!userToken) return;
-  const res = await fetch(`${API_BASE}/watchlist`, {
-    headers: { 'Authorization': `Bearer ${userToken}` }
-  });
-  const data = await res.json();
-  if (data.watchlist) {
-    watchlist = data.watchlist.map(r => ({
-      id: r.tmdb_id, title: r.title, img: r.poster,
-      year: r.year, isTv: r.media_type === 'tv', rating: r.rating
-    }));
-    updateWLUI();
-  }
-}
-
-async function syncHistory() {
-  if (!userToken) return;
-  const res = await fetch(`${API_BASE}/history`, {
-    headers: { 'Authorization': `Bearer ${userToken}` }
-  });
-  const data = await res.json();
-  if (data.history) {
-    history_ = data.history.map(r => ({
-      id: r.tmdb_id, title: r.title, img: r.poster, isTv: r.media_type === 'tv'
-    }));
-    renderHistPanel();
-  }
-}
 function changeUser() {
   document.getElementById('uField').value = currentUser;
   // Show correct heading based on whether user exists
@@ -3637,33 +3529,16 @@ document.addEventListener('keydown', e => {
 
 /* ── INIT ── */
 async function init() {
-  // Auto-restore session from stored token
-if (userToken) {
-  fetch(`${API_BASE}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token: userToken })
-  }).then(r => r.json()).then(async data => {
-    if (data.success) {
-      currentUser = data.user.username;
-      userId = data.user.id;
-      const lbl = document.getElementById('profileLabel');
-      if (lbl) lbl.textContent = currentUser;
-      const h2 = document.querySelector('#uModalMain h2');
-      if (h2) h2.innerHTML = '👤 <em>My Profile</em>';
-      await Promise.allSettled([syncWatchlist(), syncHistory()]);
-    } else {
-      // Token invalid, clear it
-      localStorage.removeItem('vx-token');
-      userToken = '';
-      setTimeout(() => document.getElementById('uOverlay').classList.add('open'), 1400);
-    }
-  }).catch(() => {
+  // Restore from localStorage
+  currentUser = localStorage.getItem('vx-user') || '';
+  watchlist = JSON.parse(localStorage.getItem('vx-watchlist') || '[]');
+  history_ = JSON.parse(localStorage.getItem('vx-history') || '[]');
+  epProgress = JSON.parse(localStorage.getItem('vx-progress') || '{}');
+  const lbl = document.getElementById('profileLabel');
+  if (lbl && currentUser) lbl.textContent = currentUser;
+  if (!currentUser) {
     setTimeout(() => document.getElementById('uOverlay').classList.add('open'), 1400);
-  });
-} else {
-  setTimeout(() => document.getElementById('uOverlay').classList.add('open'), 1400);
-}
+  }
    updateWLUI(); renderHistPanel();
   carSkels('ntwCar',10); carSkels('serCar',10); carSkels('nolCar',10); carSkels('kdrCar',10); carSkels('cdrCar',10);
 
