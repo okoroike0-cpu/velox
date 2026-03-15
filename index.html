@@ -1737,7 +1737,6 @@ async function getVeloxLinks(tmdbId, isTv) {
 
 
 /* ── API (via Cloudflare Worker — key hidden) ── */
-const WORKER = 'https://velox-worker.ikoromichael592.workers.dev';
 async function api(path) {
   try {
     const r = await fetch(`${WORKER}?path=${encodeURIComponent(path)}`);
