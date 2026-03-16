@@ -1656,7 +1656,6 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
 
 /* ── FIX 1: Use Bearer token instead of api_key param ── */
 const WORKER   = 'https://velox-worker.ikoromichael592.workers.dev';
-const API_BASE = 'https://velox-worker.ikoromichael592.workers.dev';
 const IMG  = "https://image.tmdb.org/t/p/w342";
 const ORIG = "https://image.tmdb.org/t/p/w500";
 const BG   = "https://image.tmdb.org/t/p/w1280";
@@ -1739,10 +1738,12 @@ async function getVeloxLinks(tmdbId, isTv) {
 /* ── API (via Cloudflare Worker — key hidden) ── */
 async function api(path) {
   try {
-    const r = await fetch(`${WORKER}?path=${encodeURIComponent(path)}`);
-    if (!r.ok) { console.error('TMDB', r.status, path); return {}; }
-    return await r.json();
-  } catch(e) { console.error('Fetch failed', e); return {}; }
+    const url = WORKER + '?path=' + encodeURIComponent(path);
+    const r = await fetch(url);
+    if (!r.ok) { console.error('Worker error', r.status, url); return {}; }
+    const data = await r.json();
+    return data;
+  } catch(e) { console.error('API fetch failed', path, e); return {}; }
 }
 
 function toItem(r, i=0) {
@@ -2154,7 +2155,7 @@ async function loadHero() {
 
 // TMDB genre IDs for TV
 // Movie sort state
-let movieSortMode = 'alltime';
+let movieSortMode = 'popular';
 
 // Build date range from sort mode
 function getMovieDateRange(mode) {
@@ -2175,11 +2176,8 @@ function getMovieDateRange(mode) {
 async function loadNTW(mode) {
   mode = mode || movieSortMode;
   carSkels('ntwCar', 10);
-  const range = getMovieDateRange(mode);
-  let endpoint;
-  if (range) endpoint = `/discover/movie?sort_by=popularity.desc&primary_release_date.gte=${range.gte}&primary_release_date.lte=${range.lte}&vote_count.gte=${range.minVotes}&page=1`;
-  else       endpoint = `/movie/popular?page=1`;
-  const d = await api(endpoint);
+  // Always start with popular — most reliable
+  const d = await api('/movie/popular?page=1');
   const items = (d.results||[]).slice(0,16).map((r,i) => toItem(r,i));
   renderCar('ntwCar', items);
   const el = document.getElementById('ntwCnt');
@@ -2250,11 +2248,11 @@ async function loadSerCar(country) {
 
     } else if (country === 'all') {
       const [pop, air] = await Promise.all([
-        api('/discover/tv?sort_by=popularity.desc&vote_count.gte=50&page=1'),
+        api('/tv/popular?page=1'),
         api('/tv/on_the_air?page=1'),
       ]);
-      popular = (pop.results||[]).map((r,i) => ({...toItem(r,i), isTv:true, flag:'📺'}));
-      airing  = (air.results||[]).map((r,i) => ({...toItem(r,i+8), isTv:true, flag:'🔴'}));
+      popular = (pop.results||[]).map((r,i) => ({...toItem(r,i), isTv:true}));
+      airing  = (air.results||[]).map((r,i) => ({...toItem(r,i+8), isTv:true}));
       results = [...airing, ...popular]
         .filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i)
         .slice(0,16);
@@ -2389,7 +2387,7 @@ async function loadNolCar() {
 }
 
 async function loadKdrCar() {
-  const d = await api('/discover/tv?with_origin_country=KR&with_genres=18&sort_by=vote_average.desc&vote_count.gte=100&page=1');
+  const d = await api('/discover/tv?with_origin_country=KR&sort_by=popularity.desc&page=1');
   const items = (d.results||[]).slice(0,12).map((r,i) => ({...toItem(r,i), isTv:true, flag:'🇰🇷'}));
   renderCar('kdrCar', items);
   const el = document.getElementById('kdrCnt'); if(el) el.textContent = items.length+' titles';
