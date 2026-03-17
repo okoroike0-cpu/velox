@@ -1203,6 +1203,95 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .gcrd-name{font-size:.7rem}
   .gcrd-year{font-size:.6rem}
 }
+
+/* ── FLOATING GLASS DOCK — mobile only ── */
+.nav-mobile {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  height: 64px;
+  background: rgba(15,15,15,.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+  padding: 0 15px;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 590;
+  box-shadow: 0 15px 35px rgba(0,0,0,.5);
+}
+[data-theme="light"] .nav-mobile {
+  background: rgba(246,241,233,.88);
+  border-color: rgba(0,0,0,.08);
+}
+.nav-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink3);
+  text-decoration: none;
+  transition: all .4s cubic-bezier(.23,1,.32,1);
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+.nav-item.active {
+  color: #fff;
+  transform: translateY(-8px);
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  width: 6px;
+  height: 6px;
+  background: var(--burg);
+  border-radius: 50%;
+  box-shadow: 0 0 15px var(--burg), 0 0 30px var(--burg);
+  animation: liquidPop .4s ease-out;
+}
+.nav-item svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+  transition: transform .3s ease;
+  fill: none;
+  stroke: currentColor;
+}
+.nav-item.active svg { transform: scale(1.1); stroke: var(--burg); }
+.nav-label {
+  font-size: .58rem;
+  font-weight: 700;
+  margin-top: 3px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all .3s ease;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+.nav-item.active .nav-label { opacity: 1; transform: translateY(0); color: var(--burg); }
+@keyframes liquidPop {
+  0%   { transform: scale(0); opacity: 0; }
+  50%  { transform: scale(1.5); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@media(max-width:768px) {
+  .nav-mobile { display: flex; }
+  body { padding-bottom: 100px; }
+  /* Hide hamburger menu on mobile — dock replaces it */
+  .mob-menu { display: none !important; }
+}
+
 </style>
 </head>
 <body>
@@ -3524,6 +3613,23 @@ document.addEventListener('keydown', e => {
   if (e.key==='Escape') { closeDetail(); closeWL(); closeMob(); closeSearch(); closeSched(); }
 });
 
+
+/* ── GLASS DOCK NAV ── */
+function switchNav(el, type) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  if (navigator.vibrate) navigator.vibrate(10);
+  // Hide dock when detail/panel opens, restore on home
+  if (type === 'home') {
+    const dock = document.getElementById('glassDock');
+    if (dock) dock.style.display = '';
+  }
+}
+
+// Auto-reset dock to Home when goHome is called
+const _origGoHome = goHome;
+
+
 /* ── INIT ── */
 async function init() {
   // Restore from localStorage
@@ -3669,5 +3775,30 @@ if (_lbl && currentUser) _lbl.textContent = currentUser;
 
 init();
 </script>
+
+<!-- FLOATING GLASS DOCK — mobile -->
+<nav class="nav-mobile" id="glassDock">
+  <button class="nav-item active" onclick="switchNav(this,'home');goHome()">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-item" onclick="switchNav(this,'search');toggleSearchDropdown()">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span class="nav-label">Search</span>
+  </button>
+  <button class="nav-item" onclick="switchNav(this,'schedule');openSched()">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span class="nav-label">Schedule</span>
+  </button>
+  <button class="nav-item" onclick="switchNav(this,'watchlist');openWL()">
+    <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+    <span class="nav-label">Watchlist</span>
+  </button>
+  <button class="nav-item" onclick="switchNav(this,'profile');changeUser()">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="nav-label">Profile</span>
+  </button>
+</nav>
+
 </body>
 </html>
