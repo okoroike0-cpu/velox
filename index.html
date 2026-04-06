@@ -1292,6 +1292,36 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:44px 40px 2
   .mob-menu { display: none !important; }
 }
 
+
+/* ── GLASS DOCK SAFE PADDING ── */
+@media(max-width:768px){
+  .main { padding-bottom: 120px !important; }
+  .browse-page { padding-bottom: 120px !important; }
+  #pgHome { padding-bottom: 0; }
+  /* Reduce header crowding — hide rocket and shrink theme toggle */
+  .theme-btn { width: 40px; height: 22px; }
+  .icon-btn[onclick*="toggleDataSaver"] { display: none; }
+  /* Fix hero gap */
+  .hero { margin-bottom: -40px; }
+  /* Mood/genre bars hidden on mobile already, ensure no extra gap */
+  .mood-bar, .genre-bar { padding-top: 12px; }
+}
+@media(max-width:480px){
+  /* Ensure dock never overlaps cards */
+  .sec { padding-bottom: 20px; }
+  /* Hero description clamp */
+  .hero-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: .85rem;
+  }
+  /* Card title clamp */
+  .card-name { font-size: clamp(.65rem, 2vw, .78rem); }
+  .gcrd-name { font-size: clamp(.62rem, 1.8vw, .72rem); }
+}
+
 </style>
 </head>
 <body>
