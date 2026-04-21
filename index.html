@@ -198,9 +198,9 @@ body.data-saver .card-img { background:var(--bg4) !important; }
 .mob-menu{display:none;width:36px;height:36px;align-items:center;justify-content:center;border-radius:6px;background:var(--bg3);border:1px solid var(--bdr)}
 
 /* HERO */
-.hero{position:relative;height:100vh;min-height:620px;display:flex;align-items:flex-end;padding-bottom:90px;overflow:hidden;margin-top:calc(-1 * var(--hh))}
+.hero{position:relative;height:100vh;min-height:680px;display:flex;align-items:flex-end;padding-bottom:90px;overflow:hidden;margin-top:calc(-1 * var(--hh))}
 /* Hero image — center-top so faces/titles are always visible */
-.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 20%;animation:heroZoom 22s ease-in-out infinite alternate;opacity:0;transition:opacity .8s}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center top;animation:heroZoom 22s ease-in-out infinite alternate;opacity:0;transition:opacity .8s}
 /* Desktop gradient: dark left side so text is readable over bright backdrops */
 .hero-bg::after{content:'';position:absolute;inset:0;
   background:
@@ -862,7 +862,7 @@ body.data-saver .card-img { background:var(--bg4) !important; }
   background:var(--bg2);border-top:1px solid var(--bdr);
   border-radius:20px 20px 0 0;
   transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);
-  display:flex;flex-direction:column;max-height:92vh}
+  display:flex;flex-direction:column;max-height:85vh}
 .sched-drawer.open{transform:translateY(0)}
 /* Drag handle */
 .sched-handle{width:40px;height:4px;border-radius:2px;background:var(--bdr);margin:14px auto 0;flex-shrink:0}
@@ -3241,8 +3241,15 @@ function renderWLPanel() {
   }
   el.innerHTML = watchlist.map(item => `
     <div class="wl-item" onclick="openDetailGated(${item.id},${!!item.isTv})">
-      <div class="wl-thumb">${item.img?`<img src="${item.img}" alt="${esc(item.title||'')}" onload="this.classList.add('loaded')">`:''}</div>
-      <div><div class="wl-item-title">${esc(item.title||'')}</div><div class="wl-item-meta">${item.isTv?'Series':'Movie'}${item.year?' · '+item.year:''}</div></div>
+      <div class="wl-thumb">
+        ${item.img
+          ? `<img src="${item.img}" alt="${esc(item.title||'')}" onload="this.classList.add('loaded')" onerror="this.style.display='none'">`
+          : `<div style="width:100%;height:100%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🎬</div>`}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="wl-item-title">${esc(item.title||'Unknown Title')}</div>
+        <div class="wl-item-meta">${item.isTv?'📺 Series':'🎬 Movie'}${item.year?' · '+item.year:''}</div>
+      </div>
       <span class="wl-rm" onclick="event.stopPropagation();rmWL(${item.id})">✕</span>
     </div>`).join('');
 }
